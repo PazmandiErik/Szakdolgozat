@@ -1,4 +1,8 @@
 ﻿*.identcache
 *.local
 *.~*
-
+*.docx
+*.log
+*.dcu
+*.exe
+*.res
