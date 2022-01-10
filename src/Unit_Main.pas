@@ -5,8 +5,8 @@ interface
 {$REGION 'Units'}
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, DwmAPI, Unit_Logger,
-  Vcl.Tabs, Vcl.StdCtrls, Vcl.Themes;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Unit_Logger,
+  Vcl.Tabs, Vcl.StdCtrls, Vcl.Themes, Unit_ConfigHandler, Unit_FlowManager;
 {$ENDREGION}
 
 {$REGION 'Constants'}
@@ -26,6 +26,16 @@ type
     Pnl_Settings_Footer: TPanel;
     Lab_Credits: TLabel;
     Combo_Styles: TComboBox;
+    Pnl_Flow_Interface: TPanel;
+    Pnl_Flow_Actual: TGridPanel;
+    Btn_LoadFlow: TButton;
+    Btn_NewFlow: TButton;
+    Btn_SaveFlow: TButton;
+    Pnl_Flow_EditStep: TPanel;
+    Btn_GenerateFlowSteps: TButton;
+    Pnl_EditStep_Header: TPanel;
+    Lab_EditStep_Header: TLabel;
+    SB_Flow_Actual: TScrollBox;
     procedure FormCreate(Sender: TObject);
     procedure Tim_PostFormCreateTimer(Sender: TObject);
     procedure TabSet_MainChange(Sender: TObject; NewTab: Integer;
@@ -43,6 +53,7 @@ var
   Form_Main: TForm_Main;
   logger: TLogger;
   workDir: string;
+  configHandler: TConfigHandler;
 {$ENDREGION}
 
 implementation
@@ -97,10 +108,12 @@ end;
 procedure TForm_Main.Tim_PostFormCreateTimer(Sender: TObject);
 var
   styleName: string;
+  flowManager: TFlowManager;
 begin
   // Initialize global variables
   Tim_PostFormCreate.Enabled := False;
   workDir := ExtractFileDir(Application.Exename) + '\';
+  configHandler := TConfigHandler.Create(workDir+'\Data\!runtime\mainConfig.ini');
 
   // Initialize logger
   logger := TLogger.Create(workDir + 'Logs\');
@@ -117,6 +130,16 @@ begin
   for styleName in TStyleManager.StyleNames do
     Combo_Styles.Items.Add(styleName);
   Combo_Styles.ItemIndex := Combo_Styles.Items.IndexOf(TStyleManager.ActiveStyle.Name);
+
+
+
+  flowManager := TFlowManager.Create;
+
+
+
+
+
+
 end;
 {$ENDREGION}
 
