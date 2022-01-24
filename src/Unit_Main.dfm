@@ -6,6 +6,8 @@ object Form_Main: TForm_Main
   ClientHeight = 600
   ClientWidth = 800
   Color = 15066597
+  Constraints.MinHeight = 600
+  Constraints.MinWidth = 800
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -13,7 +15,7 @@ object Form_Main: TForm_Main
   Font.Style = []
   GlassFrame.Enabled = True
   OldCreateOrder = False
-  Position = poDesigned
+  Position = poScreenCenter
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
@@ -25,6 +27,8 @@ object Form_Main: TForm_Main
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitWidth = 790
+    ExplicitHeight = 569
   end
   object Pnl_Settings: TPanel
     Left = 0
@@ -34,6 +38,8 @@ object Form_Main: TForm_Main
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitWidth = 790
+    ExplicitHeight = 569
     object Pnl_Settings_Footer: TPanel
       Left = 0
       Top = 499
@@ -42,6 +48,8 @@ object Form_Main: TForm_Main
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 0
+      ExplicitTop = 489
+      ExplicitWidth = 790
       object Lab_Credits: TLabel
         Left = 0
         Top = 0
@@ -82,6 +90,8 @@ object Form_Main: TForm_Main
     BevelOuter = bvNone
     Caption = 'Welcome!'
     TabOrder = 4
+    ExplicitWidth = 790
+    ExplicitHeight = 569
   end
   object Pnl_Flow: TPanel
     Left = 0
@@ -93,6 +103,8 @@ object Form_Main: TForm_Main
     Padding.Right = 3
     Padding.Bottom = 3
     TabOrder = 0
+    ExplicitWidth = 790
+    ExplicitHeight = 569
     object Pnl_Flow_Interface: TPanel
       Left = 0
       Top = 0
@@ -105,6 +117,7 @@ object Form_Main: TForm_Main
       Padding.Right = 5
       Padding.Bottom = 5
       TabOrder = 0
+      ExplicitHeight = 566
       object Btn_LoadFlow: TButton
         AlignWithMargins = True
         Left = 8
@@ -168,6 +181,7 @@ object Form_Main: TForm_Main
         BevelKind = bkFlat
         BevelOuter = bvNone
         TabOrder = 3
+        ExplicitHeight = 416
         object Pnl_EditStep_Header: TPanel
           Left = 0
           Top = 0
@@ -220,39 +234,43 @@ object Form_Main: TForm_Main
       Top = 0
       Width = 516
       Height = 576
+      HorzScrollBar.Visible = False
+      VertScrollBar.Tracking = True
       Align = alClient
       TabOrder = 1
-      ExplicitLeft = 312
-      ExplicitTop = 296
-      ExplicitWidth = 185
-      ExplicitHeight = 41
+      OnMouseWheel = SB_Flow_ActualMouseWheel
+      ExplicitWidth = 506
+      ExplicitHeight = 566
       object Pnl_Flow_Actual: TGridPanel
         Left = 0
         Top = 0
         Width = 512
         Height = 572
-        Align = alClient
+        Align = alTop
         BevelKind = bkFlat
         BevelOuter = bvNone
         ColumnCollection = <
           item
+            SizeStyle = ssAuto
             Value = 50.000000000000000000
           end
           item
+            SizeStyle = ssAuto
             Value = 50.000000000000000000
           end>
         ControlCollection = <>
         RowCollection = <
           item
+            SizeStyle = ssAbsolute
             Value = 50.000000000000000000
           end
           item
+            SizeStyle = ssAbsolute
             Value = 50.000000000000000000
           end>
         TabOrder = 0
-        ExplicitLeft = 281
-        ExplicitWidth = 516
-        ExplicitHeight = 576
+        ExplicitWidth = 502
+        ExplicitHeight = 562
       end
     end
   end
@@ -274,6 +292,7 @@ object Form_Main: TForm_Main
       'Scheduer'
       'Settings')
     OnChange = TabSet_MainChange
+    ExplicitWidth = 790
   end
   object Tim_PostFormCreate: TTimer
     Interval = 20

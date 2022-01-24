@@ -6,7 +6,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Unit_Logger,
-  Vcl.Tabs, Vcl.StdCtrls, Vcl.Themes, Unit_ConfigHandler, Unit_FlowManager;
+  Vcl.Tabs, Vcl.StdCtrls, Vcl.Themes, Unit_ConfigHandler, Unit_FlowManager, System.Math;
 {$ENDREGION}
 
 {$REGION 'Constants'}
@@ -41,6 +41,8 @@ type
     procedure TabSet_MainChange(Sender: TObject; NewTab: Integer;
       var AllowChange: Boolean);
     procedure Combo_StylesChange(Sender: TObject);
+    procedure SB_Flow_ActualMouseWheel(Sender: TObject; Shift: TShiftState;
+      WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
   private
     { Private declarations }
   public
@@ -67,6 +69,16 @@ begin
 end;
 {$ENDREGION}
 
+{$REGION '[ScrollBar] Flow panel - OnMouseWheel'}
+procedure TForm_Main.SB_Flow_ActualMouseWheel(Sender: TObject;
+  Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint;
+  var Handled: Boolean);
+begin
+  with  SB_Flow_Actual.VertScrollBar do begin
+    Position := Position - (Sign(WheelDelta) * Increment);
+  end;
+end;
+{$ENDREGION}
 {$REGION '[Combo box - Styles] OnChange'}
 procedure TForm_Main.Combo_StylesChange(Sender: TObject);
 begin
@@ -135,9 +147,7 @@ begin
 
   flowManager := TFlowManager.Create;
 
-
-
-
+  // New empty panel at end of the list to add other panels to the array
 
 
 end;

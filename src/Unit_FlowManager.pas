@@ -1,9 +1,12 @@
 unit Unit_FlowManager;
 
 interface
-
 uses
-  Vcl.StdCtrls, Vcl.ExtCtrls, System.SysUtils;
+  Vcl.StdCtrls, Vcl.ExtCtrls, System.SysUtils, Vcl.Controls;
+
+const
+  FLOW_PANEL_WIDTH = 256;
+  FLOW_PANEL_HEIGHT = 50;
 
 type
   // Enumerations
@@ -31,7 +34,7 @@ type
     function GetLength: integer;
     function GetElementDetails(index: integer): TFlowElement;
 
-    procedure AddElement; //needs more params
+    procedure AddElement(var gridPanel: TGridPanel);
 //    procedure Remove(elementIndex: integer);
 //    procedure Switch(index1, index2: integer);
 //    procedure InsertAfter(index: integer);
@@ -40,7 +43,7 @@ type
 //    procedure LoadFromFile(loadPath: string);
 
     constructor Create();
-//    destructor Destroy; override;
+    destructor Destroy; override;
   end;
 
 implementation
@@ -55,10 +58,35 @@ begin
   Result := flowArray[index];
 end;
 
-procedure TFlowManager.AddElement;
+procedure TFlowManager.AddElement(var gridPanel: TGridPanel);
+var
+  newGridRow: TRowItem;
 begin
   SetLength(flowArray, Length(flowArray)+1);
-  // UNFINISHED - needs more params
+  with flowArray[Length(flowArray)-1] do begin
+    // Create Panel & expand flow panel
+    panelObject := TPanel.Create(gridPanel);
+
+    if (Length(flowArray) mod 4) = 0 then begin
+      newGridRow := gridPanel.RowCollection.Add();
+      newGridRow.SizeStyle := ssAbsolute;
+      newGridRow.Value := FLOW_PANEL_HEIGHT;
+    end;
+
+    panelObject.Parent := gridPanel;
+    panelObject.Font.Size := 12;
+    panelObject.Caption := IntToStr(Length(flowArray));
+    panelObject.Width := FLOW_PANEL_WIDTH;
+    panelObject.Height := FLOW_PANEL_HEIGHT;
+    panelObject.Constraints.MinWidth := FLOW_PANEL_WIDTH;
+    panelObject.Constraints.MinHeight := FLOW_PANEL_HEIGHT;
+    panelObject.Anchors := [akLeft, akTop];
+
+  end;
+
+  // Set height of Grid Panel for scrolling purposes
+  gridPanel.Height := gridPanel.RowCollection.Count * FLOW_PANEL_HEIGHT;
+
 end;
 
 constructor TFlowManager.Create;
@@ -71,6 +99,12 @@ begin
   end;
 end;
 
+destructor TFlowManager.Destroy;
+begin
+
+  // Maybe not sufficent enough? Destroying objects may be neccessary
+  SetLength(flowArray, 0);
+end;
 
 
 
