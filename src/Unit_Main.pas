@@ -36,6 +36,7 @@ type
     Pnl_EditStep_Header: TPanel;
     Lab_EditStep_Header: TLabel;
     SB_Flow_Actual: TScrollBox;
+    Pnl_Flow_AddNew: TPanel;
     procedure FormCreate(Sender: TObject);
     procedure Tim_PostFormCreateTimer(Sender: TObject);
     procedure TabSet_MainChange(Sender: TObject; NewTab: Integer;
@@ -43,6 +44,7 @@ type
     procedure Combo_StylesChange(Sender: TObject);
     procedure SB_Flow_ActualMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    procedure Pnl_Flow_AddNewClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -56,6 +58,7 @@ var
   logger: TLogger;
   workDir: string;
   configHandler: TConfigHandler;
+  flowManager: TFlowManager;
 {$ENDREGION}
 
 implementation
@@ -69,7 +72,28 @@ begin
 end;
 {$ENDREGION}
 
-{$REGION '[ScrollBar] Flow panel - OnMouseWheel'}
+{$REGION '[Panel - Flow Add New] OnClick'}
+procedure TForm_Main.Pnl_Flow_AddNewClick(Sender: TObject);
+var
+  i: integer;
+begin
+  flowManager.AddElement(Pnl_Flow_Actual);
+
+  i := 0;
+  while (i <> Pnl_Flow_Actual.ControlCollection.Count) and (Pnl_Flow_Actual.Controls[i].Name <> 'Pnl_Flow_AddNew')  do
+    i := i + 1;
+
+  if (Pnl_Flow_Actual.Controls[i].Name = 'Pnl_Flow_AddNew') then begin
+
+    Pnl_Flow_Actual.ControlCollection.Items[i].SetLocation(
+      Pnl_Flow_Actual.ControlCollection[Pnl_Flow_Actual.ControlCollection.Count-1].Column,
+      Pnl_Flow_Actual.ControlCollection[Pnl_Flow_Actual.ControlCollection.Count-1].Row,
+      false
+    );
+  end;
+end;
+{$ENDREGION}
+{$REGION '[ScrollBar - Flow panel] OnMouseWheel'}
 procedure TForm_Main.SB_Flow_ActualMouseWheel(Sender: TObject;
   Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint;
   var Handled: Boolean);
@@ -120,7 +144,6 @@ end;
 procedure TForm_Main.Tim_PostFormCreateTimer(Sender: TObject);
 var
   styleName: string;
-  flowManager: TFlowManager;
 begin
   // Initialize global variables
   Tim_PostFormCreate.Enabled := False;
@@ -146,10 +169,6 @@ begin
 
 
   flowManager := TFlowManager.Create;
-
-  // New empty panel at end of the list to add other panels to the array
-
-
 end;
 {$ENDREGION}
 

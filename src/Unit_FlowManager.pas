@@ -1,11 +1,11 @@
 unit Unit_FlowManager;
 
 interface
+
 uses
-  Vcl.StdCtrls, Vcl.ExtCtrls, System.SysUtils, Vcl.Controls;
+  Vcl.StdCtrls, Vcl.ExtCtrls, System.SysUtils, Vcl.Controls, System.Classes;
 
 const
-  FLOW_PANEL_WIDTH = 256;
   FLOW_PANEL_HEIGHT = 50;
 
 type
@@ -72,14 +72,12 @@ begin
       newGridRow.SizeStyle := ssAbsolute;
       newGridRow.Value := FLOW_PANEL_HEIGHT;
     end;
-
+    panelObject.Name := 'Pnl_FlowMain_' + IntToStr(Length(flowArray));
     panelObject.Parent := gridPanel;
     panelObject.Font.Size := 12;
     panelObject.Caption := IntToStr(Length(flowArray));
-    panelObject.Width := FLOW_PANEL_WIDTH;
-    panelObject.Height := FLOW_PANEL_HEIGHT;
-    panelObject.Constraints.MinWidth := FLOW_PANEL_WIDTH;
-    panelObject.Constraints.MinHeight := FLOW_PANEL_HEIGHT;
+    panelObject.Align := alClient;
+
     panelObject.Anchors := [akLeft, akTop];
 
   end;
@@ -102,7 +100,7 @@ end;
 destructor TFlowManager.Destroy;
 begin
 
-  // Maybe not sufficent enough? Destroying objects may be neccessary
+  // Maybe not sufficent? Destroying objects may be neccessary
   SetLength(flowArray, 0);
 end;
 
