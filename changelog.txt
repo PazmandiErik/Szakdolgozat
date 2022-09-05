@@ -1,0 +1,30 @@
+﻿v0.0
+	- System core
+v0.1
+	- Possibility to add multiple-key combinations
+	- Form1 is now properly the main form
+        - Reworked window minimizing procedure
+v0.2
+	- Scrollable flow panel
+	- "New flow" function
+	- "Save flow" function
+	- "Load flow" function
+v0.3
+	- Schedulable flows
+
+v0.4
+	- Completely reworked flow panel
+        - Bugfix in flow scheduling
+	- Removed help menu
+v0.5
+	- The program may now only be ran as an administrator
+	- Flow may be interrupted by pressing F2+F3 simultaneously
+        - Ordered theme names
+        - Updated code for new IDE
+        - Visual update
+        - Reworked flow loading
+        - Bug fixed in starting of scheduled flow
+        - Bugfixes on the flow panel
+
+v1.0
+        - Refactored code in preparation for flow studying

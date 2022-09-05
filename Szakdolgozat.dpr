@@ -2,19 +2,17 @@ program Szakdolgozat;
 
 uses
   Vcl.Forms,
-  Unit_Main in 'src\Unit_Main.pas' {Form_Main},
-  Unit_Logger in 'src\Unit_Logger.pas',
+  Unit_Main in 'src\Unit_Main.pas' {Form1},
   Vcl.Themes,
   Vcl.Styles,
-  Unit_ConfigHandler in 'src\Unit_ConfigHandler.pas',
-  Unit_FlowManager in 'src\Unit_FlowManager.pas';
+  Unit_ConfigHandler in 'src\Unit_ConfigHandler.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.MainFormOnTaskbar := True;
-  TStyleManager.TrySetStyle('Turquoise Gray');
-  Application.CreateForm(TForm_Main, Form_Main);
+  Application.MainFormOnTaskbar := False;
+  TStyleManager.TrySetStyle('Aqua Graphite');
+  Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.
