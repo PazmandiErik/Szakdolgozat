@@ -17,7 +17,7 @@ uses
 {$REGION 'Global Constants'}
 const
   WM_KILLCONTROL = WM_USER + 1;
-  CURRENT_VERSION = '2.0';
+  CURRENT_VERSION = '1.1';
 {$ENDREGION}
 
 type
@@ -159,9 +159,6 @@ type
     inputParam2 : string;
     inputParam3 : string;
     inputParam4 : string;
-    inputParam1Text : string;
-    inputParam3Text : string;
-    inputParam4Text : string;
     waitAfterAmount : integer;
     waitAfterType : TWaitType;
     waitAfterTypeText : string;
@@ -513,10 +510,8 @@ begin
       newLinkElement.inputType := itClick;
       newLinkElement.inputParam1 := Edt_Cursor_X.Text;
       newLinkElement.inputParam2 := Edt_Cursor_Y.Text;
-      newLinkElement.inputParam3 := 'English';
-      newLinkElement.inputParam3Text := CB_MouseButton.Text;
-      newLinkElement.inputParam4 := 'English';
-      newLinkElement.inputParam4Text := CB_ClickType.Text;
+      newLinkElement.inputParam3 := CB_MouseButton.Text;
+      newLinkElement.inputParam4 := CB_ClickType.Text;
       newLinkElement.labelObject.Caption :=
         'Type: ' + CB_MouseButton.Text + ' ' + CB_ClickType.Text + sLineBreak +
         'x: ' + Edt_Cursor_X.Text + ', y: ' + Edt_Cursor_Y.Text + sLineBreak +
@@ -526,12 +521,11 @@ begin
       if CB_ExtraKey.Checked then begin
         if RadGroup_SpecialKeys.ItemIndex <> -1 then begin
           newLinkElement.inputType := itHotkey;
-          newLinkElement.inputParam1 := 'English';
-          newLinkElement.inputParam1Text := RadGroup_SpecialKeys.Buttons[RadGroup_SpecialKeys.ItemIndex].Caption;
+          newLinkElement.inputParam1 := RadGroup_SpecialKeys.Buttons[RadGroup_SpecialKeys.ItemIndex].Caption;
           newLinkElement.inputParam2 := Edt_ExtraKey.Text;
           newLinkElement.labelObject.Caption :=
             'Type: Hotkey' + sLineBreak +
-            'Key: ' + newLinkElement.inputParam1Text + ' + ' + newLinkElement.inputParam2 + sLineBreak +
+            'Key: ' + newLinkElement.inputParam1 + ' + ' + newLinkElement.inputParam2 + sLineBreak +
             'wait ' + Edt_WaitAfter.Text + ' ' + LowerCase(CB_WaitAfter.Text);
           Pnl_SpecialKeys.Visible := False;
         end;
@@ -540,10 +534,9 @@ begin
         if RadGroup_SpecialKeys.ItemIndex <> -1 then begin
           newLinkElement.inputType := itSpecialKey;
           newLinkElement.inputParam1 := RadGroup_SpecialKeys.Buttons[RadGroup_SpecialKeys.ItemIndex].Caption;
-          newLinkElement.inputParam1Text := RadGroup_SpecialKeys.Buttons[RadGroup_SpecialKeys.ItemIndex].Caption;
           newLinkElement.labelObject.Caption :=
             'Type: Special Key' + sLineBreak +
-            'Key: ' + newLinkElement.inputParam1Text + sLineBreak +
+            'Key: ' + newLinkElement.inputParam1 + sLineBreak +
             'wait ' + Edt_WaitAfter.Text + ' ' + LowerCase(CB_WaitAfter.Text);
           Pnl_SpecialKeys.Visible := False;
         end;
@@ -1321,11 +1314,9 @@ begin
               newFlowElement.inputParam1 := loadedFile[i+1];
               newFlowElement.inputParam2 := loadedFile[i+2];
               newFlowElement.inputParam3 := loadedFile[i+3];
-              newFlowElement.inputParam3Text := 'English';
               newFlowElement.inputParam4 := loadedFile[i+4];
-              newFlowElement.inputParam4Text := 'English';
               newFlowElement.labelObject.Caption :=
-                'Type: ' + newFlowElement.inputParam3Text + ' ' + newFlowElement.inputParam4Text + sLineBreak +
+                'Type: ' + newFlowElement.inputParam3 + ' ' + newFlowElement.inputParam4 + sLineBreak +
                 'x: ' + newFlowElement.inputParam1 + ', y: ' + newFlowElement.inputParam2 + sLineBreak +
                 'wait ' + IntToStr(newFlowElement.waitAfterAmount) + ' ' +
                 LowerCase(newFlowElement.waitAfterTypeText);
@@ -1334,11 +1325,10 @@ begin
               if loadedFile[i] = 'itHotkey' then begin
                 newFlowElement.inputType := itHotkey;
                 newFlowElement.inputParam1 := loadedFile[i+1];
-                newFlowElement.inputParam1Text := 'English';
                 newFlowElement.inputParam2 := loadedFile[i+2];
                 newFlowElement.labelObject.Caption :=
                   'Type: Hotkey' + sLineBreak +
-                  'Key: ' + newFlowElement.inputParam1Text + ' + ' + newFlowElement.inputParam2 + sLineBreak +
+                  'Key: ' + newFlowElement.inputParam1 + ' + ' + newFlowElement.inputParam2 + sLineBreak +
                   'wait ' + IntToStr(newFlowElement.waitAfterAmount) + ' ' +
                   LowerCase(newFlowElement.waitAfterTypeText);
               end else begin
@@ -1346,10 +1336,9 @@ begin
                 if loadedFile[i] = 'itSpecialKey' then begin
                   newFlowElement.inputType := itSpecialKey;
                   newFlowElement.inputParam1 :=  loadedFile[i+1];
-                  newFlowElement.inputParam1Text := 'English';
                   newFlowElement.labelObject.Caption :=
                     'Type: Special Key' + sLineBreak +
-                    'Key: ' + newFlowElement.inputParam1Text + sLineBreak +
+                    'Key: ' + newFlowElement.inputParam1 + sLineBreak +
                     'wait ' + IntToStr(newFlowElement.waitAfterAmount) + ' ' +
                     LowerCase(newFlowElement.waitAfterTypeText);
                 end;
