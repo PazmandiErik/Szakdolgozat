@@ -29,4 +29,5 @@ v0.5
 v1.0
         - Refactored code in preparation for flow studying
 v1.1
-        - Removed some unused code.
+        - Removed some unused code
+        - Bugfix regarding folder management

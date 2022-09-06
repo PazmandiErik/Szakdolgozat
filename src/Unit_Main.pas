@@ -1497,6 +1497,8 @@ begin
   Btn_StartFlow.BringToFront;
 
   // Load config file
+  if not System.SysUtils.DirectoryExists(workDir + '\Data\') then
+    CreateDir(workDir + '\Data');
   configFile := TConfigHandler.Create(workDir+'\Data\mainConfig.ini');
 
     //Load style
@@ -1505,7 +1507,6 @@ begin
   // System tray stuff
   TrayIcon1.Icons := TImageList.Create(Self);
   MyIcon := TIcon.Create;
-  MyIcon.LoadFromFile(workDir + '\Data\icon.ico');
   TrayIcon1.Icon.Assign(MyIcon);
   TrayIcon1.Icons.AddIcon(MyIcon);
   TrayIcon1.Hint := 'Double click to restore the window.';
