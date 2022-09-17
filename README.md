@@ -58,5 +58,6 @@ A számítógépek kifejlesztésének és használatának egyik fő motivációj
 
 ## Egyéb információ
 	1) Billentyű bevitelnél kizárólag azokat tudja szimulálni a program, amik a jelenlegi billentyűzet kiosztáson szerepelnek (például angol billentyűzet kiosztáson nem tudunk ékezetes karaktereket bevinni).
-	2) A folyamatnak a futását akármikor meg tudjuk szakítani az F2 + F3 gombok egyidejű lenyomásával.
+	2) A folyamatnak a futását akármikor meg tudjuk szakítani az F2 + F3 gombok egyidejű nyomvatartásával.
 	3) Programindításnál az első paraméter mentett állományként töltődik be
+	4) Jelenleg a felhasználói input rögzítése nem képes több mint 2 billentyűből álló kombinációból lépés generálására!
