@@ -31,3 +31,6 @@ v1.0
 v1.1
         - Removed some unused code
         - Bugfix regarding folder management
+v1.2
+        - Detached scheduler to individual unit
+        - Capturing & generating input is now possible

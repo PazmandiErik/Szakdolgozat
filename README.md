@@ -33,19 +33,20 @@ A számítógépek kifejlesztésének és használatának egyik fő motivációj
 	[Start Flow]: Minden beviteli felületnél középen található ez a gomb, ezzel tudjunk elindítani a folyamatot. Hogyha egyszer elindítottuk, ugyanezzel a gombbal tudjuk leállítani.
 	[Add]: Ezzel a gombbal tudunk hozzáadni új lépéseket a folyamatunkhoz.
 	[Wait]: Itt tudjuk beállítani, hogy egy adott lépés után mennyi szünetet tartson a program mielőtt a következőre halad.
-	
-	
+		
 	[Mouse]:
 		- Bal oldalt a „Cursor X” és „Cursor Y” feliratok melletti szövegdobozba tudjuk beírni, hogy a képernyőn melyik pixelre helyeződjön el a következő lépésben a kurzor.
 			- Ezt a jobb oldalt található “Start Recording” gomb használatával is elérhetjük (Gyorsbillentyűje: R)
 		- Az “Mouse Button” felirat mellett tudjuk kiválasztani, hogy melyik egérgombbal legyen a kattintás szimulációja.
-		- A ”Click Type” felirat mellett tudjuk pontosítani, hogy valójában milyen kattintásra is van szükségünk.
-	
+		- A ”Click Type” felirat mellett tudjuk pontosítani, hogy valójában milyen kattintásra is van szükségünk.	
 	
 	[Keyboard Input]:
 		- A “Start flow” gomb alatti szövegdobozba tudjuk beírni a kívánt szöveget.
 		- “Special keys” gomb
 			- Itt tudunk speciális billentyűket, billentyű-kombinációkat megadni a programnak, hogy majd hajtsa végre őket. Hogyha bepipáljuk az "Add Extra key" dobozt, akkor az amelletti szövegdobozba beírt karaktert is hozzáveszi az utasításhoz. (Például így tudunk CTRL+C parancsot kiadni)
+	
+	[Start / Stop Recording Input]:
+		- Ezzel tudjuk elindítani a felhasználó által bevitt inputok rögzítését, majd ezek alapján generálni a folyamatot.
 	
 ## Flow panel
 	- A programon fent látjuk ezt, hogyha megadtunk lépéseket. Ezen helyezkednek el az egyes lépések, valamint a hozzájuk tartozó információk.

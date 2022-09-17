@@ -12,12 +12,12 @@ uses
   System.Actions, Vcl.ActnList, Vcl.Menus,
 
   StrUtils, VCL.Themes, Vcl.ClipBrd, Vcl.StdActns, Vcl.AppEvnts, Vcl.Samples.Spin, System.Types, System.IOUtils,
-  Vcl.ComCtrls, Typinfo, System.UITypes, ShellAPI, Unit_ConfigHandler;
+  Vcl.ComCtrls, Typinfo, System.UITypes, ShellAPI, Unit_ConfigHandler, Unit_Scheduler, System.Diagnostics;
 {$ENDREGION}
 {$REGION 'Global Constants'}
 const
   WM_KILLCONTROL = WM_USER + 1;
-  CURRENT_VERSION = '1.1';
+  CURRENT_VERSION = '1.2';
 {$ENDREGION}
 
 type
@@ -96,6 +96,8 @@ type
     Lab_ScheduleTitle: TLabel;
     Pnl_Flow: TGridPanel;
     Pnl_Dummy: TPanel;
+    StartRecordingInput1: TMenuItem;
+    Tim_FlowGenerateDebugger: TTimer;
     procedure Btn_StartRecordClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Act_Hotkey_RecordExecute(Sender: TObject);
@@ -125,6 +127,16 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure Pnl_DummyMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure StartRecordingInput1Click(Sender: TObject);
+    procedure Tim_FlowGenerateDebuggerTimer(Sender: TObject);
+  private
+    function StartKBHook_CaptureInput(): boolean;
+    function StopKBHook_CaptureInput(): boolean;
+    function KBHookIsStarted_CaptureInput(): boolean;
+    function StartMouseHook_CaptureInput(): boolean;
+    function StopMouseHook_CaptureInput(): boolean;
+    function MouseHook_IsStarted(): boolean;
+
   protected
     procedure KillControl(var message: TMessage); message WM_KILLCONTROL;
     procedure WMSysCommand(var msg: TWMSysCommand); message WM_SYSCOMMAND;
@@ -132,8 +144,12 @@ type
     function ClearLinkedList(): integer;
     function MatchStringToVirtualKey(str : string): Byte;
     function GetControlUnderCursor(cursorX, cursorY : integer) : TControl;
+    function SplitTempFlowLine(stringToSplit: string): string;
+    procedure MatchMessageToMouseClick(WM: string; var mouseButton, clickType: string);
+    function IsSpecialKey(key: string): boolean;
   public
     procedure StopFlow();
+    procedure GenerateFlow();
   end;
   {$ENDREGION}
   {$REGION 'Thread - Cursor location'}
@@ -143,6 +159,13 @@ type
   {$ENDREGION}
   {$REGION 'Thread - Stop flow'}
   TStopFlowThread = class(TThread)
+    public
+      procedure Execute(); override;
+      constructor Create;
+  end;
+  {$ENDREGION}
+  {$REGION 'Thread - Stop input capture'}
+  TStopCaptureThread = class(TThread)
     public
       procedure Execute(); override;
       constructor Create;
@@ -168,42 +191,380 @@ type
     NextElement : PFlowElement;
   end;
   {$ENDREGION}
+  {$REGION 'Packed record - Keyboard hook'}
+  PKBDLLHOOKSTRUCT = ^TKBDLLHOOKSTRUCT;
+  TKBDLLHOOKSTRUCT = packed record
+    vkCode: DWORD;
+    scanCode: DWORD;
+    flags: DWORD;
+    time: DWORD;
+    dwExtraInfo: DWORD;
+  end;
+  {$ENDREGION}
+  {$REGION 'Packed record - Mouse hook'}
+  PMSLLHOOKSTRUCT = ^TMSLLHOOKSTRUCT;
+  TMSLLHOOKSTRUCT = packed record
+    pt: TPoint;
+    mouseData: DWORD;
+    flags: DWORD;
+    time: DWORD;
+    dwExtraInfo: ULONG_PTR;
+  end;
+  {$ENDREGION}
 
 {$REGION 'Global variables'}
 var
   Form1: TForm1;
   workDir : string;
+
   cursorThread : TCursorCheckThread;
   stopFlowThread : TStopFlowThread;
+  stopCaptureThread: TStopCaptureThread;
 
-  runCursorPos, runStopFlow: boolean;
+  runCursorPos, runStopFlow, runStopCapture: boolean;
   flowHead : PFlowElement;
   currentStep : PFlowElement;
   currentRunId, totalRuns : integer;
   unsavedProgress : boolean;
+
   configFile : TConfigHandler;
+  scheduler: TScheduleHandler;
 
   waitBetweenFlow : TWaitType;
 
   // Grid Panel control reorder
   sourceControl: TControl;
   sourceIndex, sourceRow, sourceCol: integer;
+
+  // Input capture stuff
+  rawCaptureData: TStringList;
+  stopWatch: TStopWatch;
+  // Mouse & KB Hooks
+  llKeyboardHookHotkeys: HHOOK = 0;
+  llKeyboardHookCaptureInput: HHOOK = 0;
+  KeyBoardState: TKeyboardState;
+  KeyBoardLayOut: HKL;
+  doublePressDebug: boolean;
+  mouseHook: HHOOK = 0;
+  runningScreenShotThreads: integer;
 {$ENDREGION}
 
 implementation
 
 {$R *.dfm}
 
+uses Unit_Status;
+
+{$REGION '[HOOK] TRANSLATE VIRTUAL KEY'}
+function TranslateVirtualKey(VirtualKey: integer): WideString;
+begin
+  Result := '[UNKNOWN VIRTUAL KEY]';
+  case VirtualKey of
+    VK_RETURN:   Result := '[Enter]';
+    VK_TAB:      Result := '[Tab]';
+    VK_BACK:     Result := '[Backspace]';
+    VK_SHIFT,
+    160:         Result := '[Left Shift]';
+    VK_CONTROL,
+    162:         Result := '[Left Ctrl]';
+    VK_MENU,
+    164:         Result := '[Left Alt]';
+    VK_ESCAPE:   Result := '[Escape]';
+    VK_PAUSE:    Result := '[Pause]';
+    VK_CAPITAL:  Result := '[Caps Lock]';
+    VK_PRIOR:    Result := '[Page Up]';
+    VK_NEXT:     Result := '[Page Down]';
+    VK_END:      Result := '[End]';
+    VK_HOME:     Result := '[Home]';
+    VK_LEFT:     Result := '[Arrow: Left]';
+    VK_UP:       Result := '[Arrow: Up]';
+    VK_RIGHT:    Result := '[Arrow: Right]';
+    VK_DOWN:     Result := '[Arrow: Down]';
+    VK_SELECT:   Result := '[Select]';
+    VK_PRINT:    Result := '[Print Screen]';
+    VK_EXECUTE:  Result := '[Execute]';
+    VK_SNAPSHOT: Result := '[PrtSc]';
+    VK_INSERT:   Result := '[Ins]';
+    VK_DELETE:   Result := '[Delete]';
+    VK_HELP:     Result := '[Help]';
+    VK_F1:       Result := '[F1]';
+    VK_F2:       Result := '[F2]';
+    VK_F3:       Result := '[F3]';
+    VK_F4:       Result := '[F4]';
+    VK_F5:       Result := '[F5]';
+    VK_F6:       Result := '[F6]';
+    VK_F7:       Result := '[F7]';
+    VK_F8:       Result := '[F8]';
+    VK_F9:       Result := '[F9]';
+    VK_F10:      Result := '[F10]';
+    VK_F11:      Result := '[F11]';
+    VK_F12:      Result := '[F12]';
+    VK_NUMPAD0:  Result := '[0]';
+    VK_NUMPAD1:  Result := '[1]';
+    VK_NUMPAD2:  Result := '[2]';
+    VK_NUMPAD3:  Result := '[3]';
+    VK_NUMPAD4:  Result := '[4]';
+    VK_NUMPAD5:  Result := '[5]';
+    VK_NUMPAD6:  Result := '[6]';
+    VK_NUMPAD7:  Result := '[7]';
+    VK_NUMPAD8:  Result := '[8]';
+    VK_NUMPAD9:  Result := '[9]';
+    VK_SEPARATOR:Result := '[+]';
+    VK_SUBTRACT: Result := '[-]';
+    VK_DECIMAL:  Result := '[.]';
+    VK_DIVIDE:   Result := '[/]';
+    VK_NUMLOCK:  Result := '[Num Lock]';
+    VK_SCROLL:   Result := '[Scroll Lock]';
+    VK_PLAY:     Result := '[Play]';
+    VK_ZOOM:     Result := '[Zoom]';
+    VK_LWIN:     Result := '[Windows]';
+    VK_RWIN:     Result := '[Windows]';
+    VK_APPS:     Result := '[Menu]';
+    VK_RMENU:    Result := '[Right Alt]';
+    VK_RSHIFT:   Result := '[Right Shift]';
+    VK_RCONTROL: Result := '[Right Ctrl]';
+    65: Result := '[a]';
+    66: Result := '[b]';
+    67: Result := '[c]';
+    68: Result := '[d]';
+    69: Result := '[e]';
+    70: Result := '[f]';
+    71: Result := '[g]';
+    72: Result := '[h]';
+    73: Result := '[i]';
+    74: Result := '[j]';
+    75: Result := '[k]';
+    76: Result := '[l]';
+    77: Result := '[m]';
+    78: Result := '[n]';
+    79: Result := '[o]';
+    80: Result := '[p]';
+    81: Result := '[q]';
+    82: Result := '[r]';
+    83: Result := '[s]';
+    84: Result := '[t]';
+    85: Result := '[u]';
+    86: Result := '[v]';
+    87: Result := '[w]';
+    88: Result := '[x]';
+    89: Result := '[y]';
+    90: Result := '[z]';
+  end;
+end;
+{$ENDREGION}
+
+{$REGION '[HOOK] CAPTURE MOUSE INPUT - FUNCTION'}
+function LowLevelMouseProc(nCode: integer; wParam: WPARAM; lParam: LPARAM): HRESULT; stdcall;
+var
+  fooString, fooString2: string;
+  pmhs: PMSLLHOOKSTRUCT;
+  doScreenshot: boolean;
+//  wheelDirection: word;
+begin
+  doScreenshot := False;
+  case wParam of
+    WM_LBUTTONDOWN:begin
+      fooString := '[WM_LBUTTONDOWN]';
+      fooString2 := 'Left down';
+      doScreenshot := True;
+    end;
+    WM_LBUTTONUP: begin
+      fooString := '[WM_LBUTTONUP]';
+      fooString2 := 'Left up';
+    end;
+    WM_RBUTTONDOWN: begin
+      fooString := '[WM_RBUTTONDOWN]';
+      fooString2 := 'Right down';
+      doScreenshot := True;
+    end;
+    WM_RBUTTONUP: begin
+      fooString := '[WM_RBUTTONUP]';
+      fooString2 := 'Right up';
+    end;
+    WM_MBUTTONDOWN:begin
+      fooString := '[WM_MBUTTONDOWN]';
+      fooString2 := 'Middle down';
+      doScreenshot := True;
+    end;
+    WM_MBUTTONUP: begin
+      fooString := '[WM_MBUTTONUP]';
+      fooString2 := 'Middle up';
+    end;
+{    WM_MOUSEMOVE: begin
+      fooString := '[WM_MOUSEMOVE]';
+    end;
+    WM_MOUSEWHEEL: begin
+      fooString := '[WM_MOUSEWHEEL]';
+      wheelDirection := HiWord(pmhs.mouseData);
+    end;
+    WM_MOUSEHWHEEL: begin
+      fooString := '[WM_MOUSEHWHEEL]';
+    end;                                   }
+    else begin
+      fooString := '[UNKNOWN WPARAM]';
+    end;
+  end;
+
+  if fooString <> '[UNKNOWN WPARAM]' then begin
+    pmhs := PMSLLHOOKSTRUCT(Pointer(lParam));
+
+    if Form_Status.Visible then begin
+      Form_Status.UpdateLabel_StepID(rawCaptureData.Count);
+      Form_Status.UpdateLabel_Input(
+        '[Mouse] ' +  fooString2 + sLineBreak +
+        IntToStr(pmhs.pt.x) + ':' + IntToStr(pmhs.pt.y) + sLineBreak +
+        IntToStr(stopWatch.ElapsedMilliseconds) + 'ms'
+      );
+    end;
+
+    fooString := '[' + IntToStr(rawCaptureData.Count+1) + '] [Mouse] [' + IntToStr(pmhs.pt.x) + ':' + IntToStr(pmhs.pt.y) + '] ' +
+      fooString + ' [' + IntToStr(stopWatch.ElapsedMilliseconds) + ']';
+
+    stopWatch := TStopWatch.StartNew;
+    rawCaptureData.Add(fooString);
+    if doScreenshot then begin
+//      runningScreenShotThreads := runningScreenShotThreads + 1;
+//      TScreenShotProcessThread.Create(pmhs.pt.X, pmhs.pt.Y, rawCaptureData.Count);
+    end;
+  end;
+
+  Result := CallNextHookEx(mouseHook, nCode, wParam, lParam);
+end;
+{$ENDREGION}
+{$REGION '[HOOK] CAPTURE MOUSE INPUT - START'}
+function TForm1.StartMouseHook_CaptureInput(): boolean;
+begin
+  if mouseHook = 0 then
+    mouseHook := SetWindowsHookEx(WH_MOUSE_LL, @LowLevelMouseProc, HInstance, 0);
+  Result := (mouseHook <> 0);
+  runningScreenShotThreads := 0;
+end;
+{$ENDREGION}
+{$REGION '[HOOK] CAPTURE MOUSE INPUT - STOP'}
+function TForm1.StopMouseHook_CaptureInput(): boolean;
+begin
+  Result := False;
+  if (mouseHook <> 0) and UnhookWindowsHookEx(mouseHook) then begin
+    mouseHook := 0;
+    Result := True;
+  end;
+end;
+{$ENDREGION}
+{$REGION '[HOOK] CAPTURE MOUSE INPUT - STARTED CHECK'}
+function TForm1.MouseHook_IsStarted(): boolean;
+begin
+  Result := (mouseHook <> 0)
+end;
+{$ENDREGION}
+
+{$REGION '[HOOK] CAPTURE KB INPUT - FUNCTION'}
+function LowLevelKeyboardHookCaptureInput(nCode: Integer; wParam: WPARAM; lParam: LPARAM): HRESULT; stdcall;
+var
+  pkbhs: PKBDLLHOOKSTRUCT;
+  aChr: array[0..1] of WideChar;
+  virtualKey: integer;
+  scanCode: integer;
+  convRes: integer;
+  activeWindow: HWND;
+  activeThreadID: DWord;
+  str: widestring;
+  fooString: string;
+begin
+  pkbhs := PKBDLLHOOKSTRUCT(Pointer(lParam));
+  if (nCode = HC_ACTION) then begin
+    virtualKey := pkbhs^.vkCode;
+    str := TranslateVirtualKey(virtualKey);
+    if (str = '') or (str = '[UNKNOWN VIRTUAL KEY]') then begin
+      activeWindow := GetForegroundWindow;
+      activeThreadID := GetWindowThreadProcessId(activeWindow, nil);
+      GetKeyboardState(KeyBoardState);
+      KeyboardLayout := GetKeyboardLayout(activeThreadID);
+      scanCode := MapVirtualKeyEx(virtualKey, 0, KeyboardLayout);
+      if scanCode <> 0 then begin
+        convRes := ToUnicodeEx(virtualKey, scanCode, @KeyBoardState, @aChr, SizeOf(aChr), 0, KeyboardLayout);
+        if convRes = 0 then
+          // Empty buffer - no translation for virtual key
+          str := '[NO TRANSLATION FOR VIRTUAL KEY]'
+        else if convRes >= 2 then begin
+          // Multiple characters in the buffer - possibly caused by a previous dead key
+          str := aChr[1];
+          str := '[' + str + ']';
+        end else begin
+          // Dead key or single character
+          str := aChr;
+          str := '[' + str + ']';
+        end;
+      end;
+    end;
+    fooString := str;
+
+    if wParam = WM_KEYDOWN then begin
+      str := str + ' [WM_KEYDOWN]';
+      fooString := fooString + ' Down';
+    end else if wParam = WM_KEYUP then begin
+      str := str + ' [WM_KEYUP]';
+      fooString := fooString + ' Up';
+    end else if wParam = WM_SYSKEYDOWN then begin
+      str := str + ' [WM_SYSKEYDOWN]';
+      fooString := fooString + ' Down';
+    end else if wParam = WM_SYSKEYUP then begin
+      str := str + ' [WM_SYSKEYUP]';
+      fooString := fooString + ' Up';
+    end else begin
+      str := str + ' [UNHANDLED MESSAGE TYPE]';
+      fooString := fooString + ' ?';
+    end;
+
+    if str <> '' then begin
+      if Form_Status.Visible then begin
+        Form_Status.UpdateLabel_StepID(rawCaptureData.Count);
+        Form_Status.UpdateLabel_Input(
+          '[Key] ' + sLineBreak +
+          fooString + sLineBreak +
+          IntToStr(stopWatch.ElapsedMilliseconds) + 'ms'
+        );
+      end;
+
+      str := '[' + IntToStr(rawCaptureData.Count+1) + '] [Key] ' + str + ' [' + IntToStr(stopWatch.ElapsedMilliseconds) + ']';
+      stopWatch := TStopWatch.StartNew;
+      rawCaptureData.Add(str);
+    end;
+  end;
+  Result := CallNextHookEx(llKeyboardHookCaptureInput, nCode, wParam, lParam);
+end;
+{$ENDREGION}
+{$REGION '[HOOK] CAPTURE KB INPUT - START'}
+function TForm1.StartKBHook_CaptureInput: boolean;
+begin
+  rawCaptureData := TStringList.Create;
+  if llKeyboardHookCaptureInput = 0 then
+    llKeyboardHookCaptureInput := SetWindowsHookEx(WH_KEYBOARD_LL, @LowLevelKeyboardHookCaptureInput, HInstance, 0);
+  Result := (llKeyboardHookCaptureInput <> 0);
+end;
+{$ENDREGION}
+{$REGION '[HOOK] CAPTURE KB INPUT - STOP'}
+function TForm1.StopKBHook_CaptureInput: Boolean;
+begin
+  rawCaptureData.SaveToFile(workDir + '\tempFlow.szd');
+  rawCaptureData.Free;
+  Result := False;
+  if (llKeyboardHookCaptureInput <> 0) and UnhookWindowsHookEx(llKeyboardHookCaptureInput) then begin
+    llKeyboardHookCaptureInput := 0;
+    Result := True;
+  end;
+end;
+{$ENDREGION}
+{$REGION '[HOOK] CAPTURE KB INPUT - STARTED CHECK'}
+function TForm1.KBHookIsStarted_CaptureInput: Boolean;
+begin
+  Result := (llKeyboardHookCaptureInput <> 0)
+end;
+{$ENDREGION}
+
 {$REGION '[Thread - Stop Flow] Create'}
 constructor TStopFlowThread.Create;
 begin
   inherited Create;
-end;
-{$ENDREGION}
-{$REGION '[Thread - Stop Flow] Method'}
-procedure TForm1.StopFlow;
-begin
-  Btn_StartFlowClick(Form1);
 end;
 {$ENDREGION}
 {$REGION '[Thread - Stop Flow] Execute'}
@@ -214,6 +575,24 @@ begin
       Form1.StopFlow;
     end;
   until not runStopFlow;
+end;
+{$ENDREGION}
+
+{$REGION '[Thread - Stop input capture] Create'}
+constructor TStopCaptureThread.Create;
+begin
+  inherited Create;
+end;
+{$ENDREGION}
+{$REGION '[Thread - Stop input capture] Execute'}
+procedure TStopCaptureThread.Execute;
+begin
+  repeat
+    if (GetKeyState(VK_F2) < 0) and (GetKeyState(VK_F4) < 0) then begin
+      runStopCapture := False;
+      Form1.Tim_FlowGenerateDebugger.Enabled := True;
+    end;
+  until not runStopCapture;
 end;
 {$ENDREGION}
 
@@ -843,6 +1222,45 @@ begin
   ClearLinkedList();
 end;
 {$ENDREGION}
+{$REGION '[Form] StartRecordingInput1 Click'}
+procedure TForm1.StartRecordingInput1Click(Sender: TObject);
+begin
+  StartRecordingInput1.Tag := (StartRecordingInput1.Tag + 1) mod 2;
+  if StartRecordingInput1.Tag = 1 then begin
+    // Keyboard hook
+    if not StartKBHook_CaptureInput then
+      Exception.Create('Error starting keyboard hook!');
+    // Mouse hook
+    if not StartMouseHook_CaptureInput then
+      Exception.Create('Error starting mouse hook!');
+    // UI update
+    StartRecordingInput1.Caption := 'Stop recording input';
+    // Start stopwatch
+    stopWatch.Start;
+    // Change main form for minimization purposes
+    Form_Status.Show();
+    // Start hotkey thread for stopping capture
+    stopCaptureThread := TStopCaptureThread.Create();
+    runStopCapture := True;
+  end else begin
+    // Mouse hook
+    if not StopMouseHook_CaptureInput then
+      Exception.Create('Error stoppping mouse hook!');
+    // Keyboard hook
+    if not StopKBHook_CaptureInput then
+      Exception.Create('Error stoppping keyboard hook!');
+    // UI update
+    StartRecordingInput1.Caption := 'Start recording input';
+    // Reset stopwatch
+    stopWatch.Reset;
+    // Change main form for minimization purposes
+    Form_Status.Hide();
+    // Generate flow
+    GenerateFlow();
+    unsavedProgress := True;
+  end;
+end;
+{$ENDREGION}
 {$REGION '[Form] SpinEdit_TotalRuns Change'}
 procedure TForm1.SE_TotalRunsChange(Sender: TObject);
 begin
@@ -871,14 +1289,11 @@ begin
       else showmessage('Error! Cannot get modifiers!');
     end;
 
-    // Delete if already exists
-    ShellExecute(0, nil, 'schtasks', PChar('/delete /f /tn "' + 'SC_'+ ExtractFileName(Edt_ScheduleFilePath.Text)
-      + '"'), nil, SW_HIDE);
-
-    // Create new task
-    ShellExecute(0, nil, 'schtasks', PChar('/create /tn "' + 'SC_' + ExtractFileName(Edt_ScheduleFilePath.Text)
-      + '" /tr "' + workDir + '\Szakdolgozat.exe ' + Edt_ScheduleFilePath.Text + '" ' +
-      scSchedule), nil, SW_SHOW);
+     scheduler.DeleteTask('szd_'+ ExtractFileName(Edt_ScheduleFilePath.Text));
+     scheduler.AddTask(
+      'szd_' + ExtractFileName(Edt_ScheduleFilePath.Text),
+      workDir + '\Szakdolgozat.exe ' + Edt_ScheduleFilePath.Text + '" ' + scSchedule
+     );
 
   end else begin
     showmessage('You must select a flow!');
@@ -1100,11 +1515,17 @@ begin
   end;
 end;
 {$ENDREGION}
+{$REGION '[Flow] Stop Flow Method'}
+procedure TForm1.StopFlow;
+begin
+  Btn_StartFlowClick(Form1);
+end;
+{$ENDREGION}
 {$REGION '[Flow] Match String to Virtual Key'}
 function TForm1.MatchStringToVirtualKey(str : string): Byte;
 var
-  strArray : array[1..30] of string;
-  vkArray : array[1..30] of byte;
+  strArray : array[1..40] of string;
+  vkArray : array[1..40] of byte;
   i : integer;
 begin
   for i := 0 to 29 do
@@ -1140,6 +1561,36 @@ begin
   vkArray[28] := VK_SPACE;
   vkArray[29] := VK_TAB;
   vkArray[30] := VK_LWIN;
+
+  strArray[31] := 'Enter';
+  vkArray[31] := VK_RETURN;
+
+  strArray[32] := 'Home';
+  vkArray[32] := VK_HOME;
+
+  strArray[33] := 'End';
+  vkArray[33] := VK_END ;
+
+  strArray[34] := 'Insert';
+  vkArray[34] := VK_INSERT ;
+
+  strArray[35] := 'Delete';
+  vkArray[35] := VK_DELETE ;
+
+  strArray[36] := 'Pause';
+  vkArray[36] := VK_PAUSE ;
+
+  strArray[37] := 'Num Lock';
+  vkArray[37] := VK_NUMLOCK ;
+
+  strArray[38] := 'Scroll Lock';
+  vkArray[38] := VK_SCROLL ;
+
+  strArray[39] := 'Page Up';
+  vkArray[39] := VK_PRIOR ;
+
+  strArray[40] := 'Page Down';
+  vkArray[40] := VK_NEXT ;
 
   Result := 0;
   for i := 1 to Length(vkArray) do
@@ -1374,7 +1825,6 @@ begin
   end;
 end;
 {$ENDREGION}
-
 {$REGION '[Flow] Save'}
 procedure TForm1.Save1Click(Sender: TObject);
 var
@@ -1430,6 +1880,309 @@ begin
 end;
 {$ENDREGION}
 
+{$REGION '[Flow - Generate] Main function'}
+procedure TForm1.GenerateFlow;
+var
+  tempList: TStringList;
+  splitLines: array of TStringList;
+  i, j: integer;
+  test, newLinkElement, prevElement: PFlowElement;
+  fooString, fooString2: string;
+  newPanelColumn : TColumnItem;
+
+  splitDelimiter : array[0..0] of Char;
+  splitText : TStringDynArray;
+
+  mouseCO: integer; // mouseConcatenationOffset
+
+begin
+  // Load temporary flow
+  tempList := TStringList.Create();
+  tempList.LoadFromFile(workDir + '\tempFlow.szd');
+
+  // Split raw data into string list array
+  SetLength(splitLines, tempList.Count);
+  for i := 0 to tempList.Count-1 do begin
+    splitLines[i] := TStringList.Create;
+    splitLines[i].Text := SplitTempFlowLine(tempList[i]);
+  end;
+
+
+
+ // Process loaded temporary flow lines
+  i := 0;
+  while i <= tempList.Count-3 do begin   // Skip last 2: those are used to stop the flow
+    {$REGION 'Universal init'}
+    // Find the end of the linked list
+    test := flowHead;
+    j := 1;
+    while (test.NextElement <> nil) do begin
+      test := test.NextElement;
+      j := j+1;
+    end;
+    prevElement := test;
+
+    // Create new element then add it to the end of the list
+    newLinkElement := new(PFlowElement);
+    test.NextElement := newLinkElement;
+    newLinkElement.nextElement := nil;
+    if flowHead.NextElement = nil then
+      flowHead.NextElement := newLinkElement
+    else
+      prevElement.NextElement := newLinkElement;
+
+
+    // Create Panel & expand flow panel
+    newLinkElement.panelObject := TPanel.Create(Pnl_Flow);
+
+    if (j mod 8) = 0 then begin
+      newPanelColumn := Pnl_Flow.ColumnCollection.Add();
+      newPanelColumn.SizeStyle := ssAuto;
+    end;
+    Pnl_Flow.ControlCollection.AddControl(newLinkElement.panelObject, ((j-1) div 8), ((j-1) mod 8));
+    newLinkElement.panelObject.Parent := Pnl_Flow;
+    newLinkElement.panelObject.Alignment := taRightJustify;
+    newLinkElement.panelObject.Font.Style := [fsBold];
+    newLinkElement.panelObject.Font.Size := 12;
+    newLinkElement.panelObject.Caption := IntToStr(j) +  '.         ';
+    newLinkElement.panelObject.Width := 210;
+    newLinkElement.panelObject.OnMouseDown := Pnl_Dummy.OnMouseDown;
+    newLinkElement.panelObject.OnMouseUp := Pnl_Dummy.OnMouseUp;
+
+    // Create Button
+    newLinkElement.deleteButton := TButton.Create(newLinkElement.panelObject);
+    newLinkElement.deleteButton.Parent := newLinkElement.panelObject;
+    newLinkElement.deleteButton.Font.Style := [];
+    newLinkElement.deleteButton.Font.Size := 8;
+    newLinkElement.deleteButton.Caption := 'Delete';
+    newLinkElement.deleteButton.Align := alRight;
+    newLinkElement.deleteButton.Anchors := [akRight, akTop, akBottom];
+    newLinkElement.deleteButton.Width := 40;
+    newLinkElement.deleteButton.Name := 'flowButton_'+IntToStr(j);
+    newLinkElement.deleteButton.OnClick := Btn_Dummy.OnClick;
+
+    // Create Label
+    newLinkElement.labelObject := TLabel.Create(newLinkElement.panelObject);
+    newLinkElement.labelObject.Parent := newLinkElement.panelObject;
+    newLinkElement.labelObject.Font.Style := [];
+    newLinkElement.labelObject.Font.Size := 8;
+    newLinkElement.labelObject.OnMouseDown := Pnl_Dummy.OnMouseDown;
+    newLinkElement.labelObject.OnMouseUp := Pnl_Dummy.OnMouseUp;
+
+    // Set wait time
+    newLinkElement.waitAfterAmount := 1000;
+    newLinkElement.waitAfterTypeText := 'Millisecond';
+    newLinkElement.waitAfterType := wtMil;
+
+    // Properly set wait time of previous step
+    splitLines[i][4] := LeftStr(splitLines[i][4], Length(splitLines[i][4])-1);
+    splitLines[i][4] := RightStr(splitLines[i][4], Length(splitLines[i][4])-1);
+    if prevElement <> flowHead then begin
+      newLinkElement.waitAfterAmount := StrToInt(splitLines[i][4]);
+      newLinkElement.waitAfterTypeText := 'Millisecond';
+      newLinkElement.waitAfterType := wtMil;
+    end;
+    {$ENDREGION}
+    if splitLines[i][1] = '[Mouse]' then begin
+      {$REGION '[Input type] Mouse'}
+      newLinkElement.inputType := itClick;
+
+      splitDelimiter[0] := ':';
+      SetLength(splitText, 2);
+      splitText := SplitString(splitLines[i][2], splitDelimiter);
+      splitText[0] := RightStr(splitText[0], Length(splitText[0])-1);
+      splitText[1] := LeftStr(splitText[1], Length(splitText[1])-1);
+      newLinkElement.inputParam1 := splitText[0];
+      newLinkElement.inputParam2 := splitText[1];
+
+      // Detect down+up mouse clicks
+      mouseCO := 0;
+      MatchMessageToMouseClick(splitLines[i][3], newLinkElement.inputParam3, newLinkElement.inputParam4);
+      if (LeftStr(newLinkElement.inputParam4, 9) = 'Down only') then begin
+        MatchMessageToMouseClick(splitLines[i+1][3], fooString, fooString2);
+        if (fooString = newLinkElement.inputParam3) and (LeftStr(fooString2, 7) = 'Up only') and
+          ('[' + newLinkElement.inputParam1 + ':' + newLinkElement.inputParam2 + ']' = splitLines[i+1][2]) then begin
+           mouseCO := 1;
+           newLinkElement.inputParam4 := 'Down+Up (single)';
+        end;
+      end;
+
+      newLinkElement.labelObject.Caption :=
+        'Type: ' + newLinkElement.inputParam3 + ' ' + newLinkElement.inputParam4 + sLineBreak +
+        'x: ' + newLinkElement.inputParam1 + ', y: ' + newLinkElement.inputParam2 + sLineBreak +
+        'wait ' + IntToStr(newLinkElement.waitAfterAmount) + ' ' + LowerCase(newLinkElement.waitAfterTypeText);
+      i := i + mouseCO;
+      {$ENDREGION}
+    end else if splitLines[i][1] = '[Key]' then begin
+      {$REGION '[Input type] Key'}
+      if not IsSpecialKey(splitLines[i][2]) then begin
+        // Text input
+        fooString2 := '';
+        while (i <= Length(splitLines)) and (Length(splitLines[i][2]) = 3) do begin
+          if splitLines[i][3] = '[WM_KEYDOWN]' then begin
+            fooString := splitLines[i][2];
+            fooString := LeftStr(fooString, Length(fooString)-1);
+            fooString := RightStr(fooString, Length(fooString)-1);
+            fooString2 := fooString2 + fooString;
+          end;
+          i := i+1;
+        end;
+        newLinkElement.inputType := itKeyboard;
+        newLinkElement.inputParam1 := fooString2;
+        if Length(fooString2) > 15 then begin
+          newLinkElement.labelObject.Hint := fooString2;
+          newLinkElement.labelObject.ShowHint := True;
+          newLinkElement.labelObject.Caption :=
+            'Type: Keyboard Input' + sLineBreak +
+            'Input: ' + LeftStr(fooString2,12) + '...*' + sLineBreak +
+            'wait ' + IntToStr(newLinkElement.waitAfterAmount) + ' ' + LowerCase(newLinkElement.waitAfterTypeText);
+        end else begin
+          newLinkElement.labelObject.Caption :=
+            'Type: Keyboard Input' + sLineBreak +
+            'Input: ' + fooString2 + sLineBreak +
+            'wait ' + IntToStr(newLinkElement.waitAfterAmount) + ' ' + LowerCase(newLinkElement.waitAfterTypeText);
+        end;
+        i := i-1;
+      end else begin
+        if (splitLines[i][3] = '[WM_KEYDOWN]') and (splitLines[i+1][3] = '[WM_KEYUP]') then begin
+           // Special Key
+          newLinkElement.inputType := itSpecialKey;
+          fooString := LeftStr(splitLines[i][2], Length(splitLines[i][2])-1);
+          fooString := RightStr(fooString, Length(fooString)-1);
+          newLinkElement.inputParam1 := fooString;
+          newLinkElement.labelObject.Caption :=
+            'Type: Special Key' + sLineBreak +
+            'Key: ' + newLinkElement.inputParam1 + sLineBreak +
+            'wait ' + IntToStr(newLinkElement.waitAfterAmount) + ' ' + LowerCase(newLinkElement.waitAfterTypeText);
+          i := i+1;
+
+        end else begin
+          // Hotkey
+          newLinkElement.inputType := itHotkey;
+
+          fooString := LeftStr(splitLines[i][2], Length(splitLines[i][2])-1);
+          fooString := RightStr(fooString, Length(fooString)-1);
+          newLinkElement.inputParam1 := fooString;
+
+          fooString := LeftStr(splitLines[i+1][2], Length(splitLines[i+1][2])-1);
+          fooString := RightStr(fooString, Length(fooString)-1);
+          newLinkElement.inputParam2 := fooString;
+
+          newLinkElement.labelObject.Caption :=
+            'Type: Hotkey' + sLineBreak +
+            'Key: ' + newLinkElement.inputParam1 + ' + ' + newLinkElement.inputParam2 + sLineBreak +
+            'wait ' + IntToStr(newLinkElement.waitAfterAmount) + ' ' + LowerCase(newLinkElement.waitAfterTypeText);
+
+          i := i+3
+
+        end;
+      end;
+      {$ENDREGION}
+    end else begin
+      // Unknown input type
+      showmessage('Corrupted file, can not generate flow.');
+      Exit();
+    end;
+
+    prevElement := newLinkElement;
+    prevElement.NextElement := nil;
+    unsavedProgress := true;
+    Pnl_Flow.Width :=  ((((j-1) div 8) + 1)  * newLinkElement.panelObject.Width) + 5;
+    i := i+1;
+  end;
+
+end;
+{$ENDREGION}
+{$REGION '[Flow - Generate] Split temp flow line'}
+function TForm1.SplitTempFlowLine(stringToSplit: string): string;
+var
+  fooString: string;
+  resultString: string;
+  i: integer;
+begin
+  // Misc init
+  resultString := '';
+  i := 1;
+  // Process first element (ID)
+  while stringToSplit[i] <> ' ' do begin
+      resultString := resultString + stringToSplit[i];
+    i := i+1;
+  end;
+  // Process remaining screenshotElements
+  fooString := '';
+  while i <= Length(stringToSplit)+1 do begin
+    if (i > Length(stringToSplit)) or ((stringToSplit[i] = ' ') and (stringToSplit[i-1] = ']') and (stringToSplit[i+1] = '[')) then begin
+      // Start new
+      resultString := resultString + fooString + sLineBreak;
+      fooString := '';
+    end else begin
+      // Add to current
+      fooString := fooString + stringToSplit[i];
+    end;
+    i := i+1;
+  end;
+  Result := resultString;
+end;
+{$ENDREGION}
+{$REGION '[Flow - Generate] Match Message to mouse click'}
+procedure TForm1.MatchMessageToMouseClick(WM: string; var mouseButton, clickType: string);
+begin
+  if WM = '[WM_LBUTTONDOWN]' then begin
+    mouseButton := 'Left';
+    clickType := 'Down only (single)';
+  end else if WM = '[WM_LBUTTONUP]' then begin
+    mouseButton := 'Left';
+    clickType := 'Up only (single)';
+  end else if WM = '[WM_RBUTTONDOWN]' then begin
+    mouseButton := 'Right';
+    clickType := 'Down only (single)';
+  end else if WM = '[WM_RBUTTONUP]' then begin
+    mouseButton := 'Right';
+    clickType := 'Up only (single)';
+  end else if WM = '[WM_MBUTTONDOWN]' then begin
+    mouseButton := 'Middle';
+    clickType := 'Down only (single)';
+  end else if WM = '[WM_MBUTTONUP]' then begin
+    mouseButton := 'Middle';
+    clickType := 'Up only (single)';
+  end else begin
+    mouseButton := 'Err';
+    clickType := 'Err';
+  end;
+end;
+{$ENDREGION}
+{$REGION '[Flow - Generate] Is Special Key'}
+function TForm1.IsSpecialKey(key: string): boolean;
+const
+  KEY_ARRAY: array of string = [
+    '[F1]','[F2]','[F3]','[F4]','[F5]','[F6]','[F7]','[F8]','[F9]','[F10]','[F11]','[F12]',
+    '[Arrow: Left]','[Arrow: Down]','[Arrow: Right]','[Arrow: Up]','[Backspace]','[Caps Lock]',
+    '[Enter]','[Escape]','[Left Alt]','[Left Ctrl]','[Left Shift]','[PrtSc]','[Right Alt]','[Right Ctrl]',
+    '[Right Shift]','[Tab]','[Windows]','[Home]','[End]','[Ins]','[Delete]','[Page Up]','[Page Down]','[Num Lock]',
+    '[Scroll Lock]','[Pause]'
+  ];
+var
+  i: integer;
+begin
+  i := 1;
+  while (i <= Length(KEY_ARRAY)) and (key <> KEY_ARRAY[i]) do begin
+    i := i+1;
+  end;
+  if i <= Length(KEY_ARRAY) then
+    Result := True
+  else
+    Result := False;
+end;
+{$ENDREGION}
+
+
+{$REGION '[Timer] Flow generation debugger'}
+procedure TForm1.Tim_FlowGenerateDebuggerTimer(Sender: TObject);
+begin
+  Tim_FlowGenerateDebugger.Enabled := False;
+  Form1.StartRecordingInput1Click(Form1);
+end;
+{$ENDREGION}
 {$REGION '[Timer] Post Form Create'}
 procedure TForm1.Tim_PostFormCreateTimer(Sender: TObject);
 var
@@ -1495,6 +2248,9 @@ begin
   Lab_Cursor_X.Width := Pnl_Cursor.Width-10;
   Lab_Cursor_Y.Width := Pnl_Cursor.Width-10;
   Btn_StartFlow.BringToFront;
+
+  // Init scheduler
+  scheduler := TScheduleHandler.Create;
 
   // Load config file
   if not System.SysUtils.DirectoryExists(workDir + '\Data\') then

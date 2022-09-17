@@ -773,6 +773,11 @@ object Form1: TForm1
         RadioItem = True
         OnClick = InputChangeClick
       end
+      object StartRecordingInput1: TMenuItem
+        AutoHotkeys = maManual
+        Caption = 'Start Recording Input'
+        OnClick = StartRecordingInput1Click
+      end
     end
     object Schedule1: TMenuItem
       AutoHotkeys = maManual
@@ -815,5 +820,12 @@ object Form1: TForm1
     OnTimer = Tim_PostFormCreateTimer
     Left = 216
     Top = 480
+  end
+  object Tim_FlowGenerateDebugger: TTimer
+    Enabled = False
+    Interval = 200
+    OnTimer = Tim_FlowGenerateDebuggerTimer
+    Left = 272
+    Top = 481
   end
 end
