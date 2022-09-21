@@ -2,6 +2,8 @@
 
 A számítógépek kifejlesztésének és használatának egyik fő motivációja, hogy a segítségével az automatizált módon végrehajtható folyamatok emberi beavatkozás nélkül is végrehajthatóak legyenek. Ennek ellenére számos esetben tapasztalhatjuk, hogy az alkalmazások felhasználói felületén rutinszerűen, repetitíven hajtanak végre műveleteket. A dolgozat azt vizsgálja, hogy ezek a folyamatok a korábban rögzített eseménysorok alapján hogyan ismerhetők fel. Bemutatja az RPA (Robotic Process Automation) eszközkészletét, többek között a folyamatelemzés elterjedt módszereit, alkalmazási lehetőségeit, a grafikus felhasználói felületekhez kapcsolódó speciális eseteket. Az elemzésekhez, automatizálást segítő eszköz elkészítéséhez Microsoft Windows platformon Delphi programozási nyelv kerül felhasználásra.
 
+#### Videó demo: https://youtu.be/Rye5dv3bgUs
+
 # Szoftverleírás
 
 ## Főmenü
@@ -56,5 +58,6 @@ A számítógépek kifejlesztésének és használatának egyik fő motivációj
 
 ## Egyéb információ
 	1) Billentyű bevitelnél kizárólag azokat tudja szimulálni a program, amik a jelenlegi billentyűzet kiosztáson szerepelnek (például angol billentyűzet kiosztáson nem tudunk ékezetes karaktereket bevinni).
-	2) A folyamatnak a futását akármikor meg tudjuk szakítani az F2 + F3 gombok egyidejű lenyomásával.
+	2) A folyamatnak a futását akármikor meg tudjuk szakítani az F2 + F3 gombok egyidejű nyomvatartásával.
 	3) Programindításnál az első paraméter mentett állományként töltődik be
+	4) Jelenleg a felhasználói input rögzítése nem képes több mint 2 billentyűből álló kombinációból lépés generálására!
