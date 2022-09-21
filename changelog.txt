@@ -34,3 +34,5 @@ v1.1
 v1.2
         - Detached scheduler to individual unit
         - Capturing & generating input is now possible
+v1.3
+        - Modularized entire codebase

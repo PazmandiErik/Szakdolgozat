@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>Szakdolgozat.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -114,6 +114,13 @@
             <Form>Form_Status</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="src\Unit_AuxiliaryFunctions.pas"/>
+        <DCCReference Include="src\Unit_CursorCheckThread.pas"/>
+        <DCCReference Include="src\Unit_StopFlowThread.pas"/>
+        <DCCReference Include="src\Unit_StopCaptureThread.pas"/>
+        <DCCReference Include="src\Unit_LinkedListHandler.pas"/>
+        <DCCReference Include="src\Unit_HookHandler.pas"/>
+        <DCCReference Include="src\Unit_FlowHandler.pas"/>
         <None Include="changelog.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

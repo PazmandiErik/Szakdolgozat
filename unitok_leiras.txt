@@ -1,0 +1,43 @@
+﻿Unit_Main:
+	- Fő Form
+	- Felhasználói felület
+	- Többi Unit összekapcsolása
+	
+Unit_LinkedListHandler
+	- A folyamatokhoz tartozó egyes lépések struktúráját írja le
+
+Unit_FlowHandler
+	- Általános folyamathoz kötődő eljárások és funkciók gyűjteménye
+	- Többek között: Mentés, betöltés, generálás, futtatásnál lépés feldolgozása (input injektálás)
+
+Unit_HookHandler
+	- Az alacsony szintű billentyűzet és egér hook-ok-hoz tartozó funkciókat tartalmazza
+	- Ezek csatlakoznak rá a Windows* Message sorára, itt figyelve a bevitt inputokat.
+	- *Rendszergazdai jogtól függ, hogy mindent tud-e rögzíteni
+	
+Unit_Status
+	- Második felhasználói felület
+	- Az éppen rögzítendő folyamatról szolgáltat információt - visszajelzést biztosít az aktuális inputról	
+	
+Unit_ConfigHandler
+	- Konfigurációs állományok kezelésért felel
+	- Futtatások közötti információtárolás a felhasználói preferenciákról
+
+Unit_Scheduler
+	- A Windowsba épített Task Scheduler-rel való kommunikációért felel
+	
+Unit_AuxiliaryFunctions
+	- Kiegészítő eljárások és függvények gyűjteménye
+	
+Unit_StopFlowThread
+	- Azért felel, hogy az F2+F3 bill. kombinációra leálljon egy futó folyamat
+	- Csak folyamat futtatásnál indul el
+	- Szükséges, hogy ha bármi miatt lefagyna a fő szálja a programnak, akkor is lehetőség legyen vészleállításra
+	
+Unit_CursorCheckThread
+	- Akkor indul el amikor egér pozíciót akarunk követni.
+	- Realtime frissíti az egér pozícióját
+	
+Unit_StopCaptureThread
+	- Azért felel, hogy az F2+F4 bill. kombinációra leálljon a folyamat rögzítése amennyiben az elindult
+	
