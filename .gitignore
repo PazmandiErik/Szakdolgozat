@@ -8,5 +8,5 @@
 *.res
 *.ini
 *.ico
-*.SzD
+Win32/*
 *.drawio
