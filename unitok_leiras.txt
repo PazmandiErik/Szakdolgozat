@@ -41,3 +41,6 @@ Unit_CursorCheckThread
 Unit_StopCaptureThread
 	- Azért felel, hogy az F2+F4 bill. kombinációra leálljon a folyamat rögzítése amennyiben az elindult
 	
+Unit_DataGenerator
+	- Adott kategóriákba tartozó folyamatok generálásáért felel.
+	

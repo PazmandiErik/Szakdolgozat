@@ -1,6 +1,0 @@
-﻿1. Számítógép leállítása
-2. Számítógép újraindítása
-3. Böngésző indítása
-4. Backupok
-5. Dokumentum / alkalmazás megnyitása
-6. e-mail küldése

@@ -12,12 +12,12 @@ uses
   VCL.Themes, Vcl.StdActns, Vcl.Samples.Spin, Vcl.ComCtrls, System.Actions,
 
   Unit_AuxiliaryFunctions, Unit_CursorCheckThread, Unit_StopFlowThread, Unit_ConfigHandler, Unit_Scheduler,
-  Unit_Status, Unit_StopCaptureThread, Unit_LinkedListHandler, Unit_HookHandler, Unit_FlowHandler;
+  Unit_Status, Unit_StopCaptureThread, Unit_LinkedListHandler, Unit_HookHandler, Unit_FlowHandler, Unit_DataGenerator;
 {$ENDREGION}
 {$REGION 'Global Constants'}
 const
   WM_KILLCONTROL = WM_USER + 1;
-  CURRENT_VERSION = '1.3';
+  CURRENT_VERSION = '1.4';
 {$ENDREGION}
 
 type
@@ -94,6 +94,7 @@ type
     Pnl_Dummy: TPanel;
     StartRecordingInput1: TMenuItem;
     Tim_FlowGenerateDebugger: TTimer;
+    GenerateData1: TMenuItem;
     procedure Btn_StartRecordClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Act_Hotkey_RecordExecute(Sender: TObject);
@@ -125,6 +126,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure StartRecordingInput1Click(Sender: TObject);
     procedure Tim_FlowGenerateDebuggerTimer(Sender: TObject);
+    procedure GenerateData1Click(Sender: TObject);
   protected
     procedure KillControl(var message: TMessage); message WM_KILLCONTROL;
     procedure WMSysCommand(var msg: TWMSysCommand); message WM_SYSCOMMAND;
@@ -523,6 +525,8 @@ end;
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   runCursorPos := false;
+  Form_Status.Close;
+  Form_Generator.Close;
 end;
 {$ENDREGION}
 {$REGION '[Form - Events] OnResize'}
@@ -532,6 +536,13 @@ begin
 end;
 {$ENDREGION}
 
+
+{$REGION '[Form] Generate data Click'}
+procedure TForm1.GenerateData1Click(Sender: TObject);
+begin
+  Form_Generator.Show;
+end;
+{$ENDREGION}
 {$REGION '[Form] Input Change Click'}
 procedure TForm1.InputChangeClick(Sender: TObject);
 var

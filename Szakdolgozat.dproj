@@ -121,6 +121,10 @@
         <DCCReference Include="src\Unit_LinkedListHandler.pas"/>
         <DCCReference Include="src\Unit_HookHandler.pas"/>
         <DCCReference Include="src\Unit_FlowHandler.pas"/>
+        <DCCReference Include="src\Unit_DataGenerator.pas">
+            <Form>Form_Generator</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <None Include="changelog.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

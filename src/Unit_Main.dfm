@@ -784,6 +784,10 @@ object Form1: TForm1
       Caption = 'Schedule'
       OnClick = Schedule1Click
     end
+    object GenerateData1: TMenuItem
+      Caption = 'Generate data'
+      OnClick = GenerateData1Click
+    end
     object About1: TMenuItem
       AutoHotkeys = maManual
       Caption = 'About'

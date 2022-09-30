@@ -14,7 +14,8 @@ uses
   Unit_StopCaptureThread in 'src\Unit_StopCaptureThread.pas',
   Unit_LinkedListHandler in 'src\Unit_LinkedListHandler.pas',
   Unit_HookHandler in 'src\Unit_HookHandler.pas',
-  Unit_FlowHandler in 'src\Unit_FlowHandler.pas';
+  Unit_FlowHandler in 'src\Unit_FlowHandler.pas',
+  Unit_DataGenerator in 'src\Unit_DataGenerator.pas' {Form_Generator};
 
 {$R *.res}
 
@@ -24,5 +25,6 @@ begin
   TStyleManager.TrySetStyle('Aqua Graphite');
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TForm_Status, Form_Status);
+  Application.CreateForm(TForm_Generator, Form_Generator);
   Application.Run;
 end.

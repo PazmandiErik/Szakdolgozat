@@ -1,0 +1,139 @@
+﻿1. Computer shutdown
+	1.0: 
+		1: Click Windows button
+		2. Click Power button
+		3. Click Shutdown
+	1.1:
+		1: Press Windows key
+		2. Click Power button
+		3. Click Shutdown	  
+	1.2:
+		1. Press ALT+F4
+		2. Press Enter
+	1.3:
+		1. Press ALT+F4
+		2. Click Ok button
+	1.4:
+		1. Press WIN+R
+		2. Type "cmd"
+		3. Press Enter
+		4. Type "shutdown - s"
+		5. Press Enter
+	1.5:
+		1. Press WIN
+		2. Type "command prompt"
+		3. Press Enter
+		4. Type "shutdown - s"
+		5. Press Enter	  
+	1.6:
+		1. Press WIN
+		2. Type "cmd"
+		3. Press Enter
+		4. Type "shutdown - s"
+		5. Press Enter	  
+		
+2. Computer restart
+	2.0: 
+		1: Click Windows button
+		2. Click Power button
+		3. Click Restart
+	2.1:
+		1: Press Windows key
+		2. Click Power button
+		3. Click Restart	  
+	2.2:
+		1. Press ALT+F4
+		2. Click Dropdown
+		3. Select Restart
+		4. Click Ok button
+	2.3:
+		1. Press ALT+F4
+		2. Press "Arrow: Down"
+		3. Press Enter		
+	2.4:
+		1. Press ALT+F4
+		2. Press "Arrow: Down"
+		3. Click Ok button								
+	2.5:
+		1. Press WIN+R
+		2. Type "cmd"
+		3. Press Enter
+		4. Type "shutdown - r"
+		5. Press Enter	
+	2.6:
+		1. Press WIN
+		2. Type "command prompt"
+		3. Press Enter
+		4. Type "shutdown - r"
+		5. Press Enter	  
+	2.7:
+		1. Press WIN
+		2. Type "cmd"
+		3. Press Enter
+		4. Type "shutdown - r"
+		5. Press Enter			
+3. Browser launch
+	3.0:
+		1. Press WIN
+		2. Type "ms edge"
+		3. Press Enter
+	3.1:		
+		1. Press WIN
+		2. Type "edge"
+		3. Press Enter		
+	3.2:
+		1. Press WIN
+		2. Type "chrome"
+		3. Press Enter	
+	3.3:
+		1. Press WIN
+		2. Type "browser"
+		3. Press Enter			
+	3.4:
+		1. Press WIN
+		2. Type "edge"
+		3. Click icon
+	3.5:
+		1. Press WIN
+		2. Type "chrome"
+		3. Click icon
+	3.6:
+		1. Press WIN
+		2. Type "browser"
+		3. Click icon						
+	3.7:
+		1. Press WIN+R
+		2. Type "msedge"
+		3. Press Enter
+	3.8:				
+		1. Press WIN+R
+		2. Type "chrome"
+		3. Press Enter	
+	3.9:
+		1. Click Windows button
+		2. Type "browser"
+		3. Press Enter		
+	3.10:
+		1. Click Windows button
+		2. Type "edge"
+		3. Press Enter	
+		
+
+				
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

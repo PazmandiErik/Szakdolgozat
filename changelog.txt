@@ -36,3 +36,5 @@ v1.2
         - Capturing & generating input is now possible
 v1.3
         - Modularized entire codebase
+v1.4
+        - New data generator unit & form for generating flows for datamining purposes

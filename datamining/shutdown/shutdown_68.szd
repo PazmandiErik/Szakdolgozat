@@ -1,0 +1,6 @@
+[1] [Key] [Left Alt] [WM_SYSKEYDOWN] [2350]
+[2] [Key] [F4] [WM_SYSKEYUP] [82]
+[3] [Key] [F4] [WM_SYSKEYDOWN] [1252]
+[4] [Key] [Left Alt] [WM_KEYUP] [97]
+[5] [Mouse] [1001:512] [WM_LBUTTONDOWN] [777]
+[6] [Mouse] [1001:512] [WM_LBUTTONUP] [85]
