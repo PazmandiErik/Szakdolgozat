@@ -1,4 +1,5 @@
-﻿*.identcache
+﻿*.gz
+*.identcache
 *.local
 *.~*
 *.docx
