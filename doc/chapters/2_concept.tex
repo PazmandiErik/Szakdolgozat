@@ -1,47 +1,64 @@
 \Chapter{Folyamatelemzés}
 
+\Section{Alpha-algoritmus} 
 
-\Section{Alpha-algoritmus} \textit{Forrás: \cite{wiki:001}.}\\
+Az Alpha algoritmus (vagy Alpha bányász) mint folyamatelemzési algoritmus célja, hogy eseménysorozatok halmazából egy ok-okozat rendszert építsen fel. Először van der Aalst, Weijters és Măruşter hozta be a köztudatba. A működésében az eseménysorok halmazát nevezhetjük eseménynaplónak is. Ez az eseménynapló úgynevezett trace hal\hyp{}mazoknak a halmaza, egy trace pedig adott tevékenységnek a sorozata.
 
-Az alpha algoritmus (vagy alpha bányász) mint folyamatelemzési algoritmus célja, hogy eseménysorozatok halmazából egy ok-okozat rendszert építsen fel. Először van der Aalst, Weijters és Măruşter hozta be a köztudatba. A működésében az eseménysorok halmazát nevezhetjük eseménynaplónak is. Ez az eseménynapló úgynevezett trace hal\hyp{}mazoknak a halmaza, egy trace pedig adott tevékenységnek a sorozata.
-
-Az alpha bányász volt a legelső folyamatbányászati módszer amit valaha javasoltak és egy egész jó rálátást biztosít a folyamatbányászat céljára, valamint arra, hogy a folyamatokban lévő különböző tevékenységek hogyan is vannak végrehajtva. Emelett, az alpha bányász szolgált számos újabb folyamatbányászati technika (pl.: Heurisztikus bányász, genetikus bányászat) alapjaként.
+Az Alpha bányász volt a legelső folyamatbányászati módszer amit valaha javasoltak és egy egész jó rálátást biztosít a folyamatbányászat céljára, valamint arra, hogy a folyamatokban lévő különböző tevékenységek hogyan is vannak végrehajtva. Emelett, az Alpha bányász szolgált számos újabb folyamatbányászati technika (pl.: Heurisztikus bányász, genetikus bányászat) alapjaként.
+	
+\begin{definition}{\textit{(Munkafolyamati trace)}} Egy string a $T$ ábécé feladatai közül.\end{definition}
+\begin{definition}{\textit{(Munkafolyamati napló)}} Munkafolyamati tracek halmaza.\end{definition}
 
 \subsection{Rövid leírása}	
 
 Az algoritmus egy munkafolyamati naplót $W \subseteq  T^*$ kap bemenetként, és eredményként egy munkafolyamati hálót épít fel.
 
 Ezt az alapján csinálja meg, hogy megvizsgálja az általános kapcsolatokat az egyes feladatok között. Például egy adott feladat lehet, hogy minden esetben megelőz egy másik feladatot, ami egy hasznos információ.
-\newline\newline
-\textbf{Definíciók}
-\begin{itemize}
-\item \textit{Munkafolyamati trace}: Egy string a $T$ ábécé feladatai közül.
-\item \textit{Munkafolyamati napló}: Munkafolyamati tracek halmaza.
-\end{itemize}
 
 \subsection{Eseménynapló}
 Az eseménynapló az elsődleges szükséglet bármely folyamatbányászati algoritmus alkal\hyp{}mazásához. Az eseménynapló a következőket tartalmazza: egyedi azonosító az esethez, tevékenység megnevezése valamint egy időbélyeg. Egy eseménynaplót akár tevékenysé\hyp{}gek halmazának halmazaként is lehet ábrázolni.
-\newpage
-Az alpha bányász szabályai szerint az egyes tevékenységek között az alábbi 4 féle kapcsolat egyike lehetséges:
-\begin{itemize}
+
+Az Alpha bányász szabályai szerint az egyes tevékenységek között az alábbi 4 féle kapcsolat egyike lehetséges:
+\begin{enumerate}
 \item \textbf{Közvetlen sorrend: $x > y$} akkor és csakis akkor ha az $x$ eseményt közvetlenül követi $y$.
 \item \textbf{Okozat: $x \rightarrow y$} ha $x > y$ és nem $y > x$.
 \item \textbf{Párhuzam: $x \parallel y$} ha $x > y$ és $y > x$.
 \item \textbf{Választás: $x \# y$} ha nem $(x > y)$ és nem $(y > x)$.
-\end{itemize}
+\end{enumerate}
 
 \subsection{Minták}
 
-1. \textbf{Szekvencia: A $\rightarrow$ B}\\
+\begin{figure}[h!]
+\begin{center}
+\caption{\textbf{Szekvencia: A $\rightarrow$ B}}
 \includegraphics[width=8truecm, height=4truecm]{images/img_alpha_seq}\\
-2. \textbf{XOR-elágazás: A $\rightarrow$ B, A $\rightarrow$ C} és \textbf{B \# C}\\
+\label{fig:example}
+\end{center}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{center}
+\caption{\textbf{XOR-elágazás: A $\rightarrow$ B, A $\rightarrow$ C} és \textbf{B \# C}}
 \includegraphics[width=8truecm, height=6truecm]{images/img_alpha_xor}\\
-3. \textbf{ÉS-elágazás: A $\rightarrow$ B, A $\rightarrow$ C} és \textbf{B $\parallel$ C}\\
+\label{fig:example}
+\end{center}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{center}
+\caption{\textbf{ÉS-elágazás: A $\rightarrow$ B, A $\rightarrow$ C} és \textbf{B $\parallel$ C}}
 \includegraphics[width=8truecm, height=6truecm]{images/img_alpha_and}\\
+\label{fig:example}
+\end{center}
+\end{figure}
+
+\newpage
 
 \subsection{Példa}
 Vegyük példának a következő eseménynaplót:\\
+\begin{figure}[h]
 \begin{center}
+\caption{Példa eseménynaplpó}
 \begin{tabular}{||c | c | c ||}
 	\hline
 	ID & Tevékenység & Időbélyeg \\ [0.5ex]
@@ -69,41 +86,48 @@ Vegyük példának a következő eseménynaplót:\\
 	3 & D & 2022-10-07 14:59:22.000 \\
 	\hline
 \end{tabular}
+\label{fig:example}
 \end{center}
+\end{figure}\\	
 Ebben az esetben az eseménynaplót az alábbi módon tudjuk jelölni:
 \[ 
 	L_1 = [< A,B,C,D >, <A,C,B,D>, <A,E,D>]
 \]
 
-Az alpha bányász úgy kezdi a munkát, hogy az eseménynaplót közvetlen-sorrend, okozat, párhuzam és választás relációkra alakítja és ezeket felhasználva létrehoz egy petri hálót ami leírja a folyamat modellét.
+Az Alpha bányász úgy kezdi a munkát, hogy az eseménynaplót közvetlen-sorrend, okozat, párhuzam és választás relációkra alakítja és ezeket felhasználva létrehoz egy petri hálót ami leírja a folyamat modellét.
 
 Első lépésként létrehoz egy lenyomati mátrixot:
 
+\begin{figure}[h!]
 \begin{center}
+\caption{Példa lenyomati mátrix}
 \begin{tabular}{|c | c | c | c | c | c|}
 	\hline
-	\hspace{0.1cm} & a & b & c & d & e \\
+	\hspace{0.1cm} & A & B & C & D & E \\
 	\hline
-	a & \# & $\rightarrow$ & $\rightarrow$ & \# & $\rightarrow$ \\
+	A & \# & $\rightarrow$ & $\rightarrow$ & \# & $\rightarrow$ \\
 	\hline
-	b & $\leftarrow$ & \# & $\parallel$ & $\rightarrow$ & \# \\
+	B & $\leftarrow$ & \# & $\parallel$ & $\rightarrow$ & \# \\
 	\hline
-	c & $\leftarrow$ & $\parallel$ & \# & $\rightarrow$ & \# \\
+	C & $\leftarrow$ & $\parallel$ & \# & $\rightarrow$ & \# \\
 	\hline
-	d  & \# & $\leftarrow$ & $\leftarrow$ & \# & $\leftarrow$ \\
+	D  & \# & $\leftarrow$ & $\leftarrow$ & \# & $\leftarrow$ \\
 	\hline
-	e & $\leftarrow$ & \# & \# & $\rightarrow$ & \# \\
+	E & $\leftarrow$ & \# & \# & $\rightarrow$ & \# \\
 	\hline
 \end{tabular}
+\label{fig:example}
 \end{center}
+\end{figure}
+
+\newpage
 
 \noindent $Y_W$ az összes $(A,B)$  pár halmaza a feladatok maximális halmazából úgy, hogy:
 \begin{itemize}
 	\item {Egyik $A \times A$ és $B \times B$ sem tagja $>$-nek, és}
 	\item {$A \times B$ részhalmaza $\rightarrow$-nek.}
 \end{itemize}
-\noindent $P_W$ tartalmazza az egyes $Y_W$-hez tartozó helyeket $p_(A,B)$, plussz a beviteli $i_W$ helyet és a kimeneti $o_W$ helyet.
-\newpage
+\noindent $P_W$ tartalmazza az egyes $Y_W$-hez tartozó helyeket $p_{(A,B)}$, plussz a beviteli $i_W$ helyet és a kimeneti $o_W$ helyet.
 \noindent A folyamati reláció $F_W$ az alábbiak uniójából áll össze:
 \begin{itemize}
 \item $\{(a,p_{(C,B)})|(A,B) \in Y_W \wedge a \in A\}$
@@ -120,18 +144,25 @@ Első lépésként létrehoz egy lenyomati mátrixot:
 \item mivel minden $T_W$ átmenet $F_W$-úton van $i_W$-ből $o_W$-be, így valóban egy munka\hyp{}folyamati háló.
 \end{itemize}
 
-\noindent Ehhez a példához az alábbi petri háló jönne létre az alpha bányász használatával:
+\noindent Ehhez a példához az alábbi petri háló jön létre az Alpha bányász használatával
+\begin{figure}[h]
+\caption{Példa kimeneti petri háló}
+\begin{center}
 \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/img_alpha_petri_output}\\
+\label{fig:example}
+\end{center}
+\end{figure}
 
+ \newpage
 
 \subsection{Korlátozások}
 \begin{itemize}
-\item \textbf{Implicit helyek}: Az alpha bányász nem tud különbséget tenni az implicit és a szükséges helyek között, így a felfedezett petri hálóban előfordulhatnak plusz szükségetelen helyek.
-\item \textbf{Ciklusok}: Az alpha bányász nem képes 1-gyes és 2-tes hosszúságú ciklusok felismerésére a folyamatmodellben.
-\item A helyi függőségeket gyakran nem veszi észre az alpha bányász.
+\item \textbf{Implicit helyek}: Az Alpha bányász nem tud különbséget tenni az implicit és a szükséges helyek között, így a felfedezett petri hálóban előfordulhatnak plusz szükségetelen helyek.
+\item \textbf{Ciklusok}: Az Alpha bányász nem képes 1-gyes és 2-tes hosszúságú ciklusok felismerésére a folyamatmodellben.
+\item A helyi függőségeket gyakran nem veszi észre az Alpha bányász.
 \end{itemize}
 
-
+\textit{Forrás: \cite{wiki:001}.}\\
 
 
 

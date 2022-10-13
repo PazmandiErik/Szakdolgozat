@@ -15,7 +15,10 @@ uses
   Unit_LinkedListHandler in 'src\Unit_LinkedListHandler.pas',
   Unit_HookHandler in 'src\Unit_HookHandler.pas',
   Unit_FlowHandler in 'src\Unit_FlowHandler.pas',
-  Unit_DataGenerator in 'src\Unit_DataGenerator.pas' {Form_Generator};
+  Unit_DataGenerator in 'src\Unit_DataGenerator.pas' {Form_Generator},
+  Unit_Miner in 'src\Unit_Miner.pas' {Form_Miner},
+  Unit_MinerResults in 'src\Unit_MinerResults.pas' {Form_MinerResults},
+  Unit_PetriHandler in 'src\Unit_PetriHandler.pas';
 
 {$R *.res}
 
@@ -26,5 +29,7 @@ begin
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TForm_Status, Form_Status);
   Application.CreateForm(TForm_Generator, Form_Generator);
+  Application.CreateForm(TForm_Miner, Form_Miner);
+  Application.CreateForm(TForm_MinerResults, Form_MinerResults);
   Application.Run;
 end.

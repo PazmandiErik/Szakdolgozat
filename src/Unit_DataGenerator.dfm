@@ -26,8 +26,6 @@ object Form_Generator: TForm_Generator
     ReadOnly = True
     ScrollBars = ssVertical
     TabOrder = 1
-    ExplicitWidth = 671
-    ExplicitHeight = 281
   end
   object Pnl_Interface: TPanel
     Left = 0
@@ -40,8 +38,6 @@ object Form_Generator: TForm_Generator
     Padding.Right = 5
     Padding.Bottom = 5
     TabOrder = 0
-    ExplicitTop = 264
-    ExplicitWidth = 671
     DesignSize = (
       640
       116)
@@ -54,7 +50,6 @@ object Form_Generator: TForm_Generator
       Caption = 'Generate'
       TabOrder = 0
       OnClick = Btn_GenerateClick
-      ExplicitLeft = 488
     end
     object RadGroup_GenCategory: TRadioGroup
       Left = 6
@@ -69,9 +64,6 @@ object Form_Generator: TForm_Generator
         'Computer restart'
         'Browser launch')
       TabOrder = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitHeight = 105
     end
     object Spin_GenCount: TSpinEdit
       Left = 552

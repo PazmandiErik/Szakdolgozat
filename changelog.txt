@@ -38,3 +38,6 @@ v1.3
         - Modularized entire codebase
 v1.4
         - New data generator unit & form for generating flows for datamining purposes
+v1.5
+        - New units: Miner, MinerResults, PetriHandler
+        - Alpha miner implemented

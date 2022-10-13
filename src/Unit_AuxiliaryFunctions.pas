@@ -10,6 +10,7 @@ procedure MatchMessageToMouseClick(WM: string; var mouseButton, clickType: strin
 function MatchStringToVirtualKey(str : string; strs: TStrings): Byte;
 function SplitTempFlowLine(stringToSplit: string): string;
 function IsSpecialKey(key: string): boolean;
+function currentStackUsage: NativeUInt;
 
 implementation
 
@@ -133,7 +134,7 @@ begin
       resultString := resultString + stringToSplit[i];
     i := i+1;
   end;
-  // Process remaining screenshotElements
+  // Process remaining elements
   fooString := '';
   while i <= Length(stringToSplit)+1 do begin
     if (i > Length(stringToSplit)) or ((stringToSplit[i] = ' ') and (stringToSplit[i-1] = ']') and (stringToSplit[i+1] = '[')) then begin
@@ -173,4 +174,20 @@ begin
 end;
 {$ENDREGION}
 
+{$REGION 'Get current stack usage'}
+function currentStackUsage: NativeUInt;
+{$IFDEF MSWINDOWS}
+//NB: Win32 uses FS, Win64 uses GS as base for Thread Information Block.
+asm
+  {$IFDEF WIN32}
+  mov eax, fs:[4]  // TIB: base of the stack
+  sub eax, esp     // compute difference in EAX (=Result)
+  {$ENDIF}
+  {$IFDEF WIN64}
+  mov rax, gs:[8]  // TIB: base of the stack
+  sub rax, rsp     // compute difference in RAX (=Result)
+  {$ENDIF}
+{$ENDIF}
+end;
+{$ENDREGION}
 end.

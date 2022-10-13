@@ -12,12 +12,13 @@ uses
   VCL.Themes, Vcl.StdActns, Vcl.Samples.Spin, Vcl.ComCtrls, System.Actions,
 
   Unit_AuxiliaryFunctions, Unit_CursorCheckThread, Unit_StopFlowThread, Unit_ConfigHandler, Unit_Scheduler,
-  Unit_Status, Unit_StopCaptureThread, Unit_LinkedListHandler, Unit_HookHandler, Unit_FlowHandler, Unit_DataGenerator;
+  Unit_Status, Unit_StopCaptureThread, Unit_LinkedListHandler, Unit_HookHandler, Unit_FlowHandler,
+  Unit_DataGenerator, Unit_Miner;
 {$ENDREGION}
 {$REGION 'Global Constants'}
 const
   WM_KILLCONTROL = WM_USER + 1;
-  CURRENT_VERSION = '1.4';
+  CURRENT_VERSION = '1.5';
 {$ENDREGION}
 
 type
@@ -95,6 +96,8 @@ type
     StartRecordingInput1: TMenuItem;
     Tim_FlowGenerateDebugger: TTimer;
     GenerateData1: TMenuItem;
+    Mining1: TMenuItem;
+    Alphaminer1: TMenuItem;
     procedure Btn_StartRecordClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Act_Hotkey_RecordExecute(Sender: TObject);
@@ -127,6 +130,7 @@ type
     procedure StartRecordingInput1Click(Sender: TObject);
     procedure Tim_FlowGenerateDebuggerTimer(Sender: TObject);
     procedure GenerateData1Click(Sender: TObject);
+    procedure Alphaminer1Click(Sender: TObject);
   protected
     procedure KillControl(var message: TMessage); message WM_KILLCONTROL;
     procedure WMSysCommand(var msg: TWMSysCommand); message WM_SYSCOMMAND;
@@ -536,14 +540,19 @@ begin
 end;
 {$ENDREGION}
 
-
-{$REGION '[Form] Generate data Click'}
+{$REGION '[Form - menu click] Alphaminer1 Click'}
+procedure TForm1.Alphaminer1Click(Sender: TObject);
+begin
+  Form_Miner.Show;
+end;
+{$ENDREGION}
+{$REGION '[Form - menu click] Generate data Click'}
 procedure TForm1.GenerateData1Click(Sender: TObject);
 begin
   Form_Generator.Show;
 end;
 {$ENDREGION}
-{$REGION '[Form] Input Change Click'}
+{$REGION '[Form - menu click] Input Change Click'}
 procedure TForm1.InputChangeClick(Sender: TObject);
 var
   selected : TPanel;
@@ -565,14 +574,14 @@ begin
 
 end;
 {$ENDREGION}
-{$REGION '[Form] About Click'}
+{$REGION '[Form - menu click] About Click'}
 procedure TForm1.About1Click(Sender: TObject);
 begin
   showmessage('Szakdolgozat v' + CURRENT_VERSION +  sLineBreak +
               'Application design and coding by Pázmándi Erik: pazmandi.erik@gmail.com');
 end;
 {$ENDREGION}
-{$REGION '[Form] Tray Icon Double Click'}
+{$REGION '[Form - menu click] Tray Icon Double Click'}
 procedure TForm1.TrayIcon1DblClick(Sender: TObject);
 begin
   TrayIcon1.Visible := False;
@@ -581,13 +590,80 @@ begin
   Application.BringToFront();
 end;
 {$ENDREGION}
-{$REGION '[Form] Dummy1 Click (Set Style)'}
+{$REGION '[Form - menu click] Dummy1 Click (Set Style)'}
 procedure TForm1.Dummy1Click(Sender: TObject);
 begin
   TStyleManager.SetStyle(TMenuItem(Sender).Caption);
   ConfigFile.Save('Style',TMenuItem(Sender).Caption);
 end;
 {$ENDREGION}
+{$REGION '[Form - menu click] Schedule1 Click'}
+procedure TForm1.Schedule1Click(Sender: TObject);
+begin
+  Pnl_Schedule.BringToFront;
+  Lab_Edt_WaitAfter.Visible := False;
+  Pnl_Schedule.Visible := True;
+  Pnl_Schedule.SetFocus();
+end;
+{$ENDREGION}
+{$REGION '[Form - menu click] Save1Click'}
+procedure TForm1.Save1Click(Sender: TObject);
+begin
+  SaveFlow();
+end;
+{$ENDREGION}
+{$REGION '[Form - menu click] Load1 Click'}
+procedure TForm1.Load1Click(Sender: TObject);
+begin
+  LoadFlow('user');
+end;
+{$ENDREGION}
+{$REGION '[Form - menu click] New1 Click'}
+procedure TForm1.NewFlow1Click(Sender: TObject);
+begin
+  ClearLinkedList();
+end;
+{$ENDREGION}
+{$REGION '[Form - menu click] StartRecordingInput1 Click'}
+procedure TForm1.StartRecordingInput1Click(Sender: TObject);
+begin
+  StartRecordingInput1.Tag := (StartRecordingInput1.Tag + 1) mod 2;
+  if StartRecordingInput1.Tag = 1 then begin
+    // Keyboard hook
+    if not StartKBHook_CaptureInput then
+      Exception.Create('Error starting keyboard hook!');
+    // Mouse hook
+    if not StartMouseHook_CaptureInput then
+      Exception.Create('Error starting mouse hook!');
+    // UI update
+    StartRecordingInput1.Caption := 'Stop recording input';
+    // Start stopwatch
+    stopWatch.Start;
+    // Change main form for minimization purposes
+    Form_Status.Show();
+    // Start hotkey thread for stopping capture
+    stopCaptureThread := TStopCaptureThread.Create();
+    runStopCapture := True;
+  end else begin
+    // Mouse hook
+    if not StopMouseHook_CaptureInput then
+      Exception.Create('Error stoppping mouse hook!');
+    // Keyboard hook
+    if not StopKBHook_CaptureInput then
+      Exception.Create('Error stoppping keyboard hook!');
+    // UI update
+    StartRecordingInput1.Caption := 'Start recording input';
+    // Reset stopwatch
+    stopWatch.Reset;
+    // Change main form for minimization purposes
+    Form_Status.Hide();
+    // Generate flow
+    GenerateFlow();
+    unsavedProgress := True;
+  end;
+end;
+{$ENDREGION}
+
 {$REGION '[Form] Edit_WaitBetween Change'}
 procedure TForm1.Edt_WaitBetweenChange(Sender: TObject);
 begin
@@ -765,72 +841,6 @@ begin
   end;
 end;
 {$ENDREGION}
-{$REGION '[Form] Schedule1 Click'}
-procedure TForm1.Schedule1Click(Sender: TObject);
-begin
-  Pnl_Schedule.BringToFront;
-  Lab_Edt_WaitAfter.Visible := False;
-  Pnl_Schedule.Visible := True;
-  Pnl_Schedule.SetFocus();
-end;
-{$ENDREGION}
-{$REGION '[Form] Save1Click'}
-procedure TForm1.Save1Click(Sender: TObject);
-begin
-  SaveFlow();
-end;
-{$ENDREGION}
-{$REGION '[Form] Load1 Click'}
-procedure TForm1.Load1Click(Sender: TObject);
-begin
-  LoadFlow('user');
-end;
-{$ENDREGION}
-{$REGION '[Form] New1 Click'}
-procedure TForm1.NewFlow1Click(Sender: TObject);
-begin
-  ClearLinkedList();
-end;
-{$ENDREGION}
-{$REGION '[Form] StartRecordingInput1 Click'}
-procedure TForm1.StartRecordingInput1Click(Sender: TObject);
-begin
-  StartRecordingInput1.Tag := (StartRecordingInput1.Tag + 1) mod 2;
-  if StartRecordingInput1.Tag = 1 then begin
-    // Keyboard hook
-    if not StartKBHook_CaptureInput then
-      Exception.Create('Error starting keyboard hook!');
-    // Mouse hook
-    if not StartMouseHook_CaptureInput then
-      Exception.Create('Error starting mouse hook!');
-    // UI update
-    StartRecordingInput1.Caption := 'Stop recording input';
-    // Start stopwatch
-    stopWatch.Start;
-    // Change main form for minimization purposes
-    Form_Status.Show();
-    // Start hotkey thread for stopping capture
-    stopCaptureThread := TStopCaptureThread.Create();
-    runStopCapture := True;
-  end else begin
-    // Mouse hook
-    if not StopMouseHook_CaptureInput then
-      Exception.Create('Error stoppping mouse hook!');
-    // Keyboard hook
-    if not StopKBHook_CaptureInput then
-      Exception.Create('Error stoppping keyboard hook!');
-    // UI update
-    StartRecordingInput1.Caption := 'Start recording input';
-    // Reset stopwatch
-    stopWatch.Reset;
-    // Change main form for minimization purposes
-    Form_Status.Hide();
-    // Generate flow
-    GenerateFlow();
-    unsavedProgress := True;
-  end;
-end;
-{$ENDREGION}
 {$REGION '[Form] SpinEdit_TotalRuns Change'}
 procedure TForm1.SE_TotalRunsChange(Sender: TObject);
 begin
@@ -971,6 +981,8 @@ begin
   if not System.SysUtils.DirectoryExists(workDir + '\Data\') then
     CreateDir(workDir + '\Data');
   configFile := TConfigHandler.Create(workDir+'\Data\mainConfig.ini');
+
+  Form_Miner.Edt_DataPath.Text := configFile.Load('alphaminer_datapath', 'C:\');
 
     //Load style
   TStyleManager.TrySetStyle(ConfigFile.Load('Style', 'Aqua Graphite'));

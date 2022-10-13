@@ -788,6 +788,13 @@ object Form1: TForm1
       Caption = 'Generate data'
       OnClick = GenerateData1Click
     end
+    object Mining1: TMenuItem
+      Caption = 'Mining'
+      object Alphaminer1: TMenuItem
+        Caption = 'Alpha miner'
+        OnClick = Alphaminer1Click
+      end
+    end
     object About1: TMenuItem
       AutoHotkeys = maManual
       Caption = 'About'

@@ -44,3 +44,11 @@ Unit_StopCaptureThread
 Unit_DataGenerator
 	- Adott kategóriákba tartozó folyamatok generálásáért felel.
 	
+Unit_Miner
+	- Az adatbányászatért felel. Eseménynapló felépítés, Lenyomati mátrix, stb...
+	
+Unit_MinerResults
+	- Az adatbányászati eredmények megjelenítésére szolgál.
+
+Unit_PetriHandler
+	- A petri hálóhoz tartozó struktúrák és eljárások gyűjteménze
