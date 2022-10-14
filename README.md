@@ -30,6 +30,8 @@ A számítógépek kifejlesztésének és használatának egyik fő motivációj
 			• Hogyha egyszer már bekapcsoltunk egy időzítést, azt kizárólag a Windowsnak a “Task Scheduler” (feladatütemező) moduljából tudjuk kikapcsolni, hiszen ide kerül beírásra.
 ### Generate data
 	Eseménysorok generálása
+### Mining
+	Adatbányászat
 ### About
 	Készítői információ
 	
