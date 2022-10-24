@@ -20,10 +20,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
-  private
-    { Private declarations }
   public
-    { Public declarations }
     procedure UpdateLabel_Input(newText: string);
     procedure UpdateLabel_StepID(newID: integer);
   end;

@@ -26,7 +26,6 @@ type
     function IsInActivityList(str: string): boolean;
     function GetNewActivityID: string;
     function FindActivityID(str: string): string;
-
   end;
 
 var

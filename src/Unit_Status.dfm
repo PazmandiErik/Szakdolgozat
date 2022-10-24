@@ -12,6 +12,7 @@ object Form_Status: TForm_Status
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  FormStyle = fsStayOnTop
   Padding.Left = 5
   Padding.Top = 5
   Padding.Right = 5

@@ -109,9 +109,117 @@ Miután a program elindult, a különböző funkciók közötti navigálásra a 
 			\end{center}
 		\end{figure}
 	}
-
 \end{enumerate}
 
 \Section {Folyamathoz tartozó vezérlés}
 
+A folyamatok vezérlésére több robosztus felületet biztosít a szoftver, ezeknek a segítsé\hyp{}gével lehet:
+\begin{enumerate}
+	\item{
+		\textbf{Lépéseket kézileg hozzáadni}: A bevitel tipusának kiválasztása után meg lehet határozni a lépés paramétereit, majd az "Add" gombra kattintva hozzáadásra kerül a folyamathoz.
+		\begin{figure}[h!]
+			\begin{center}
+				\caption{Lépés hozzáadása}
+				\includegraphics[width=0.5\textwidth, keepaspectratio=true]{images/img_flow_add}\\
+				\label{fig:example}
+			\end{center}
+		\end{figure}
+	}
+	\item{
+		\textbf{Felhasználói eseménysort rögzíteni}: A funkció elindítása után a szoftver rögzíti a felhasználó által bevitt inputot, amiről visszajelzést biztosít egy külön ablakban.
+		\begin{figure}[h!]
+			\begin{center}
+				\caption{Felhasználói eseménysor rögzítése}
+				\includegraphics[width=0.5\textwidth, keepaspectratio=true]{images/img_flow_capture}\\
+				\label{fig:example}
+			\end{center}
+		\end{figure}\\
+		A funkció leállítását követően a rögzített lépesekből folyamati lépések kerülnek generálásra, amiket a szoftver fő felületén lehet látni.
+		\begin{figure}[h!]
+			\begin{center}
+				\caption{Generált lépések}
+				\includegraphics[width=0.45\textwidth, keepaspectratio=true]{images/img_flow_captured}\\
+				\label{fig:example}
+			\end{center}
+		\end{figure}
+	}
+	\item{
+		\textbf{Folyamatok lépéseit kezelni}: A "Delete" gombbal törölni lehet lépéseket, drag-and-drop stílusban pedig átrendezni őket.
+		\begin{figure}[h!]
+			\begin{center}
+				\caption{Törlés és átrendezés}
+				\includegraphics[width=0.45\textwidth, keepaspectratio=true]{images/img_flow_del}\\
+				\label{fig:example}
+			\end{center}
+		\end{figure}
+	}
+	\item{
+		\textbf{Folyamatokat időzíteni}: Elkészített és lementett folyamatokat a beágyazott funkció segítségével lehet időzíteni.
+		\begin{figure}[h!]
+			\begin{center}
+				\caption{Időzítés}
+				\includegraphics[width=0.45\textwidth, keepaspectratio=true]{images/img_flow_schedule}\\
+				\label{fig:example}
+			\end{center}
+		\end{figure}
+	}
+	\item{
+		\textbf{Folyamatokat visszajátszani}: A folyamatot elindítva az egyes lépések szekven\hyp{}ciálisan végrehajtódnak.
+		\begin{figure}[h!]
+			\begin{center}
+				\caption{Futtatás}
+				\includegraphics[width=0.45\textwidth, keepaspectratio=true]{images/img_flow_run}\\
+				\label{fig:example}
+			\end{center}
+		\end{figure}
+	}
+
+\end{enumerate}
+
 \Section {Adatbányászat}
+
+Az állományba lementett folyamatokon van lehetőség folyamatelemezés végrehajtására. Ehhez első lépésként össze kell gyűjteni az elemezni kívánt folymatokat egy könyvtárba.
+
+Ezután a szoftver főmenüjében a "\textbf{Mining" $\rightarrow$ "Alpha miner}" útvonalon elérjük az adatbányászat kezdőfelületét.
+
+\newpage
+
+\begin{figure}[h!]
+	\begin{center}
+		\caption{Adatbányászati felület}
+		\includegraphics[width=0.45\textwidth, keepaspectratio=true]{images/img_datamining_ui}\\
+		\label{fig:example}
+	\end{center}
+\end{figure}
+
+Ennek az ablaknak a tetején található a napló amiben az szerepel, hogy az adatbá\hyp{}nyászati folyamatban éppen mely lépésnél tart a szoftver.
+
+A folyamatokat tartalmazó könyvtár kiválasztása után a "Begin mining" gombra kattintva elindul az adatbányászat. Miután végzett az algoritmussal a program, a bányászat eredményeit egy új ablakban vizualizálja.
+
+\begin{figure}[h!]
+	\begin{center}
+		\caption{Adatbányászati felület}
+		\includegraphics[width=\textwidth, keepaspectratio=true]{images/img_datamining_results}\\
+		\label{fig:example}
+	\end{center}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -25,8 +25,6 @@ type
 
     function GetClickDelay(_type: integer): integer;
     function GetRandomMouseCoordinate(min, max: integer):integer;
-  public
-    { Public declarations }
   end;
 
 var

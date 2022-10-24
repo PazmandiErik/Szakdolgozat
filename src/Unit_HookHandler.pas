@@ -36,7 +36,6 @@ var
   KeyBoardLayOut: HKL;
   doublePressDebug: boolean;
   mouseHook: HHOOK = 0;
-  runningScreenShotThreads: integer;
 
 
 function StartMouseHook_CaptureInput(): boolean;
@@ -337,7 +336,6 @@ begin
   if mouseHook = 0 then
     mouseHook := SetWindowsHookEx(WH_MOUSE_LL, @LowLevelMouseProc, HInstance, 0);
   Result := (mouseHook <> 0);
-  runningScreenShotThreads := 0;
 end;
 {$ENDREGION}
 {$REGION 'Mouse - Stop'}

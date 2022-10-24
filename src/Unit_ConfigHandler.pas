@@ -31,9 +31,6 @@ type
 
     function MatchCharToArrayIndex(const character: char): integer;
   end;
-
-
-
 const
   charArray: array[0..255] of WideChar = (
    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
