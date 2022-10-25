@@ -20,7 +20,7 @@
 
 A program gyakorlati megvalósítása egy-két apróságtól eltekintve megegyezik a terve\hyp{}zettel. Az alapvető stuktúra az tartva lett, az egymáshoz tartozó funkciók, változók és kódrészletek külön egységekbe (továbbiakban: unitok) lettek szedve, így csoportosítva az egyes szoftverfunkciókat.
 
-Ezeknek a unitok többféle kapcsolatban állhatnak egymással, az egymásra való hivatkozásuknak függvényében. Ezeket a kapcsolatokat a következő ábra demonstrálja.
+Ezek a unitok többféle kapcsolatban állhatnak egymással, az egymásra való hivatko\hyp{}zásuknak függvényében. Ezeket a kapcsolatokat a következő ábra demonstrálja.
 
 \begin{figure}[h]
 	\begin{center}
@@ -34,7 +34,7 @@ Pirossal azok a unitok vannak ábrázolva melyekhez tartozik grafikus felület i
 
 \begin{itemize}
 	\item{
-		\textbf{Unit\_Main}: Ez a program főegysége, ebben került implementálásra a főablak és annak felhasználói felülete, számos funkciót lát el:
+		\textbf{Unit\_Main}: Ez a program főegysége, ebben került implementálásra a főablak és annak felhasználói felülete. Számos funkciót lát el:
 		\begin{enumerate}
 			\item{Implementálja a felhasználói felület objektumait, azoknak a tulajdonságait és rutinjait,}
 			\item{Inicializálja a programot futtatásnál, betölti a felhasználó konfigurációit,}
@@ -108,7 +108,7 @@ Az eltérés annyi, hogy az \textbf{F2 + F4} billentyűkombinációt figyeli, me
 	\item{
 		\textbf{Unit\_LinkedListHandler}: Egy olyan struktúrát implementál, melyre a szoft\hyp{}ver összes többi folyamatkezezlő egysége épül. Az ebből a láncolt lista struktúrá\hyp{}ból példányosított elemek tartalmazzák a folyamati lépésekhez tartozó összes információt.
 
-	Először is implementál két felsorolás típust, melyek inuitív módon leírják magu\hyp{}kat:
+	Először is implementál két felsorolás típust, melyek intuitív módon leírják magu\hyp{}kat:
 	\begin{lstlisting}
 type
   // Enum
@@ -138,7 +138,7 @@ type
   end;
 	\end{lstlisting}
 
-	Ezek mellett még tartalmaz egy rutint, mely arra szolgál, hogy egy meglévő láncolt lista elemtől kezdve az összes további elemhez tartalmazó objektumot megfelelően szabadítsa fel a memóriából.
+	Ezek mellett még tartalmaz egy rutint, mely arra szolgál, hogy egy meglévő láncolt lista elemtől kezdve az összes további elemhez tartozó objektumot megfele\hyp{}lően szabadítsa fel a memóriából.
 
 	}
 	\item{
@@ -192,7 +192,7 @@ type
   end;
 		\end{lstlisting}
 
-A rutinjai lehetővé teszik, hogy más egységből (pl.: Unit\_LinkedListHandler) is lehessen frissíteni a grafikus elemeit, valamint, hogy folyamatrögzítés közben hiába látszik az ablak, akkor se legyen útban a felhasználónak.
+A rutinjai lehetővé teszik, hogy más egységből (pl.: Unit\_HookHandler) is lehes\hyp{}sen frissíteni a grafikus elemeit, valamint, hogy folyamatrögzítés közben hiába látszik az ablak, akkor se legyen útban a felhasználónak.
 	}
 	\item{
 		\textbf{Unit\_Scheduler}: Két egyszerű függvényt implementáló osztályt definiál, mely arra szolgál, hogy a Windows API segítségével meghívott \textit{schtasks.exe} feladatüte\hyp{}mezőbe rögzíteni, illetve onnan törölni lehessen folyamatokat.
@@ -267,7 +267,7 @@ A halmazpárok három-dimenziós adatstruktúraban vannak tárolva illetve kezel
 
 	}
 	\item{
-		\textbf{Unit\_MinerResults}: Azt a felületet implementáló egység, mely az Alpha-algoritmus eredményeit jelenít meg grafikusan. Ezek:
+		\textbf{Unit\_MinerResults}: Azt a felületet implementáló egység, mely az Alpha-algoritmus eredményeit jeleníti meg grafikusan. Ezek:
 		\begin{enumerate}
 			\item{A létrejött eseménynapló,}
 			\item{Az eseménynaplóból meghatározott lenyomati mátrix,}
@@ -294,7 +294,7 @@ A halmazpárok három-dimenziós adatstruktúraban vannak tárolva illetve kezel
 		\end{lstlisting}
 	}
 	\item{
-		\textbf{Unit\_PetriHandler}: Számos objektumot és rutint implementál, melyek segít\hyp{}ségével felépíthető és megjeleníthető egy Petri-háló
+		\textbf{Unit\_PetriHandler}: Számos objektumot és rutint implementál, melyek segít\hyp{}ségével felépíthető és megjeleníthető egy Petri-háló.
 		\begin{enumerate}
 			\item{Definiálja a helyeket,
 				\begin{lstlisting}
