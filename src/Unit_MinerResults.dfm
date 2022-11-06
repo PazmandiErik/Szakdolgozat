@@ -201,6 +201,15 @@ object Form_MinerResults: TForm_MinerResults
           Stretch = True
         end
       end
+      object Btn_SavePetri: TButton
+        Left = 1
+        Top = 1
+        Width = 75
+        Height = 25
+        Caption = 'Save Image'
+        TabOrder = 1
+        OnClick = Btn_SavePetriClick
+      end
     end
   end
 end

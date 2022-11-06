@@ -790,10 +790,7 @@ object Form1: TForm1
     end
     object Mining1: TMenuItem
       Caption = 'Mining'
-      object Alphaminer1: TMenuItem
-        Caption = 'Alpha miner'
-        OnClick = Alphaminer1Click
-      end
+      OnClick = Mining1Click
     end
     object About1: TMenuItem
       AutoHotkeys = maManual

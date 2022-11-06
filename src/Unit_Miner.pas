@@ -15,17 +15,20 @@ type
     Lab_DataPath: TLabel;
     Btn_DataPath_Browse: TButton;
     Btn_Begin: TButton;
+    RadGroup_MinerType: TRadioGroup;
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure Btn_DataPath_BrowseClick(Sender: TObject);
     procedure Btn_BeginClick(Sender: TObject);
   private
     procedure AddToLog(msg: string);
     procedure AlphaMine();
+    procedure HeuristicMine();
     procedure ChangeUserControl(newState: boolean);
     function RemoveBracketsFromString(str: string): string;
     function IsInActivityList(str: string): boolean;
     function GetNewActivityID: string;
     function FindActivityID(str: string): string;
+    procedure ConstructEventLog();
   end;
 
 var
@@ -43,17 +46,28 @@ uses
 {$REGION '[Button Click] Begin mining'}
 procedure TForm_Miner.Btn_BeginClick(Sender: TObject);
 begin
-  if Length(Edt_DataPath.Text) > 3 then begin
-    AddToLog('Starting Alpha mining in: ' + Edt_DataPath.Text);
-    try
-      ChangeUserControl(False);
-      AlphaMine();
-    finally
-      AddToLog('Finished.');
-      ChangeUserControl(True);
+  try
+    ChangeUserControl(False);
+    if Length(Edt_DataPath.Text) > 3 then begin
+      case RadGroup_MinerType.ItemIndex of
+        0: begin
+          AddToLog('Starting Alpha mining in: ' + Edt_DataPath.Text);
+          AlphaMine();
+
+        end;
+        1: begin
+          AddToLog('Starting Heuristic mining in: ' + Edt_DataPath.Text);
+          HeuristicMine();
+        end else begin
+          AddToLog('Please select the miner type.');
+        end;
+      end;
+    end else begin
+      AddToLog('Invalid data path!');
     end;
-  end else begin
-    AddToLog('Invalid data path!');
+  finally
+    AddToLog('Finished.');
+    ChangeUserControl(True);
   end;
 end;
 {$ENDREGION}
@@ -96,28 +110,14 @@ begin
   Mem_Log.Lines.Add(FormatDateTime('[yyyy.MM.dd. hh:mm:ss] ', Now()) + msg);
 end;
 {$ENDREGION}
-{$REGION 'Alpha mine'}
-procedure TForm_Miner.AlphaMine();
+
+{$REGION 'Construct event Log'}
+procedure TForm_Miner.ConstructEventLog;
 var
-  currentFileName, fooString, activityName: string;
-  fooStringList: TStringList;
-  currentTrace, elapsedTime: integer;
-
-  splitText : TStringList;
-
-  i,j,k,l,m : integer;
-  footprintMatrix: array of array of integer; // 2d matrix
-  currentActivity, nextActivity, prevActivity: integer;
-
-  allSets: TArrayOfSets;
-  finalSetList: TArrayOfSets; // after deleting non-maximals
-  fooArray, fooArray2: array of integer;
-  dependenceIndexes: array of integer;
-  elementsInSet: integer;
-  isSubset: boolean;
-
+ currentTrace, elapsedTime: integer;
+ currentFileName, fooString, activityName: string;
+ fooStringList, splitText: TStringList;
 begin
-  {$REGION 'Construct event log'}
   AddToLog('Constructing event log from traces...');
   currentTrace := 0;
   SetLength(eventLog, 0, 3);
@@ -161,7 +161,24 @@ begin
       fooStringList.Free;
     end;
   end;
-  {$ENDREGION}
+end;
+{$ENDREGION}
+
+{$REGION 'Alpha mine'}
+procedure TForm_Miner.AlphaMine();
+var
+  fooString: string;
+  i,j,k,l,m : integer;
+  footprintMatrix: array of array of integer; // 2d matrix
+  currentActivity, nextActivity, prevActivity: integer;
+  allSets: TArrayOfSets;
+  finalSetList: TArrayOfSets; // after deleting non-maximals
+  fooArray, fooArray2, dependenceIndexes: array of integer;
+  elementsInSet: integer;
+  isSubset: boolean;
+
+begin
+  ConstructEventLog();
   {$REGION 'Construct footprint matrix'}
   AddToLog('Event log constructed, converting into footprint matrix...');
   SetLength(footprintMatrix, Length(activityList), Length(activityList));
@@ -432,6 +449,7 @@ begin
     end;
 
     // Fill footprint matrix
+    Lab_FootprintMatrix_Title.Caption := 'Footprint Matrix';
     StrGrid_FootprintMatrix.ColCount := Length(footprintMatrix)+1;
     StrGrid_FootprintMatrix.RowCount := Length(footprintMatrix)+1;
     for i := 0 to Length(footprintMatrix)-1 do begin
@@ -464,13 +482,167 @@ begin
       fooString := LeftStr(fooString, Length(fooString)-3);
       fooString := fooString + ')';
       StrGrid_AllSets.Cells[0, i] := fooString;
-    end;    
+    end;
+    Pnl_AllSets.Visible := True;
   end;
 
   // Draw Petri net
   try
     try
       Form_MinerResults.DrawPetriNet(finalSetList);
+    except
+      on E: Exception do
+        ShowMessage('Error drawing Petri net:' + E.Message);
+    end;
+  finally
+    Form_MinerResults.Show;
+  end;
+  {$ENDREGION}
+end;
+{$ENDREGION}
+{$REGION 'Heuristic mine'}
+procedure TForm_Miner.HeuristicMine();
+var
+  fooMatrix: array of array of double;
+  dependencyMatrix: TFloatMatrix;
+  i,j,k: integer;
+  currentActivity, nextActivity: integer;
+  // two-length loop vars
+  twoLoopMatrix: TFloatMatrix;
+  // long distance vars
+  longDistanceMatrix: TFloatMatrix;
+  totalOccurences: array of integer;
+begin
+  ConstructEventLog();
+  {$REGION 'Direct sequence & 1 length loops'}
+  SetLength(fooMatrix, Length(activityList), Length(activityList));
+  for i := 0 to Length(fooMatrix)-1 do
+    for j := 0 to Length(fooMatrix)-1 do
+      fooMatrix[i][j] := 0;
+  i := 0;
+  while i < Length(eventLog) do begin
+    currentActivity := StrToInt(eventLog[i][1]);
+    // If current Activity is last element, do not check next one.
+    if i < Length(eventLog)-1 then begin
+      nextActivity := StrToInt(eventLog[i+1][1]);
+      // Check if trace is matching
+      if eventLog[i][0] = eventLog[i+1][0] then begin
+        fooMatrix[currentActivity][nextActivity] := fooMatrix[currentActivity][nextActivity] + 1;
+      end;
+    end;
+    i := i+1;
+  end;
+  SetLength(dependencyMatrix, Length(fooMatrix), Length(fooMatrix));
+
+  for i := 0 to Length(fooMatrix)-1 do
+    for j := 0 to Length(fooMatrix)-1 do begin
+      if i = j then
+        // Measure 1 length loops
+        dependencyMatrix[i][j] := fooMatrix[i][j] / (fooMatrix[i][j] + 1)
+      else
+        // Measure direct sequence relations
+        dependencyMatrix[i][j] :=(fooMatrix[i][j] - fooMatrix[j][i]) / ((fooMatrix[i][j] + fooMatrix[j][i]) + 1);
+    end;
+  {$ENDREGION}
+  {$REGION 'Two-length loops'}
+  for i := 0 to Length(fooMatrix)-1 do
+    for j := 0 to Length(fooMatrix)-1 do
+      fooMatrix[i][j] := 0;
+  SetLength(twoLoopMatrix, Length(dependencyMatrix), Length(dependencyMatrix));
+  for i := 0 to Length(twoLoopMatrix)-1 do
+    for j := 0 to Length(twoLoopMatrix)-1 do
+      twoLoopMatrix[i][j] := 0;
+
+  // Iterate over activityList
+  for i := 0 to Length(activityList)-1 do
+    // i: main activity, j: secondary activity
+    for j := 0 to Length(activityList)-1 do
+      // Count these sequences in the event log. [Main] [Secondary] [Main]
+      for k := 0 to Length(eventLog)-3 do
+        // Check for a single trace
+        if (eventLog[k][0] = eventLog[k+1][0]) and (eventLog[k+1][0] = eventLog[k+2][0]) then
+          // Check if events are matching
+          if (eventLog[k][1] = activityList[i][1]) and (eventLog[k+1][1] = activityList[j][1]) and
+          (eventLog[k+2][1] = activityList[i][1]) then
+            fooMatrix[i][j] := fooMatrix[i][j] + 1;
+
+  // Calculate twoLengthMatrix values
+  for i := 0 to Length(fooMatrix)-1 do
+    for j := 0 to Length(fooMatrix)-1 do
+      if i <> j then
+        twoLoopMatrix[i][j] := (fooMatrix[i][j] + fooMatrix[j][i]) / ((fooMatrix[i][j] + fooMatrix[j][i]) + 1);
+  {$ENDREGION}
+  {$REGION 'Long-distance relations'}
+  for i := 0 to Length(fooMatrix)-1 do
+    for j := 0 to Length(fooMatrix)-1 do
+      fooMatrix[i][j] := 0;
+  SetLength(longDistanceMatrix, Length(fooMatrix), Length(fooMatrix));
+  for i := 0 to Length(longDistanceMatrix)-1 do
+    for j := 0 to Length(longDistanceMatrix)-1 do
+      longDistanceMatrix[i][j] := 0;
+
+  // Iterate over event log
+  for i := 0 to Length(eventLog)-2 do begin
+    j := i;
+    k := j+1;
+    while (k <= Length(eventLog)-1) and (eventLog[j][0] = eventLog[k][0]) do begin
+      fooMatrix[StrToInt(eventLog[j][1])][StrToInt(eventLog[k][1])] :=
+        fooMatrix[StrToInt(eventLog[j][1])][StrToInt(eventLog[k][1])] + 1;
+      k := k +1;
+    end;
+  end;
+
+  // Count event occurences
+  SetLength(totalOccurences, Length(fooMatrix));
+  for i := 0 to Length(totalOccurences)-1 do
+    totalOccurences[i] := 0;
+
+  for i := 0 to Length(eventLog)-1 do
+    totalOccurences[StrToInt(eventLog[i][1])] := totalOccurences[StrToInt(eventLog[i][1])] + 1;
+
+  // Build long-distance dependency matrix
+  for i := 0 to Length(fooMatrix)-1 do
+    for j := 0 to Length(fooMatrix)-1 do begin
+      if fooMatrix[i][j] > totalOccurences[i] then
+        fooMatrix[i][j] := totalOccurences[i];
+      longDistanceMatrix[i][j] := (fooMatrix[i][j]) / (totalOccurences[i]+1);
+    end;
+  {$ENDREGION}
+  {$REGION 'Display results'}
+  AddToLog('Displaying results...');
+  with Form_MinerResults do begin
+    // Fill event log
+    StrGrid_EventLog.RowCount := Length(eventLog)+1;
+    for i := 0 to Length(eventLog)-1 do begin
+      StrGrid_EventLog.Cells[0, i+1] := eventLog[i][0];
+      StrGrid_EventLog.Cells[1, i+1] := 'Activity_' + eventLog[i][1];
+      StrGrid_EventLog.Cells[2, i+1] := eventLog[i][2];
+    end;
+
+    // Fill new matrix
+    Lab_FootprintMatrix_Title.Caption := 'Dependency Matrix';
+    StrGrid_FootprintMatrix.ColCount := Length(dependencyMatrix)+1;
+    StrGrid_FootprintMatrix.RowCount := Length(dependencyMatrix)+1;
+    for i := 0 to Length(dependencyMatrix)-1 do begin
+      StrGrid_FootprintMatrix.Cells[0, i+1] := activityList[i][1];
+      StrGrid_FootprintMatrix.Cells[i+1, 0] := activityList[i][1];
+    end;
+
+    for i := 0 to Length(dependencyMatrix)-1 do begin
+      for j := 0 to Length(dependencyMatrix)-1 do begin
+         if dependencyMatrix[i][j] = 0 then
+          StrGrid_FootprintMatrix.Cells[j+1,i+1] := '0'
+         else
+          StrGrid_FootprintMatrix.Cells[j+1,i+1] := FloatToStrF(dependencyMatrix[i][j], ffNumber, 15, 2);
+      end;
+    end;
+    Pnl_AllSets.Visible := False;
+  end;
+
+  // Draw Petri net
+  try
+    try
+      Form_MinerResults.DrawPetriNet(dependencyMatrix, twoLoopMatrix, longDistanceMatrix);
     except
       on E: Exception do
         ShowMessage('Error drawing Petri net:' + E.Message);

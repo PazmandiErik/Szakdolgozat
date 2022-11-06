@@ -82,14 +82,26 @@ object Form_Miner: TForm_Miner
       end
     end
     object Btn_Begin: TButton
-      Left = 489
+      Left = 454
       Top = 140
-      Width = 150
+      Width = 185
       Height = 50
       Anchors = [akRight, akBottom]
       Caption = 'Begin mining'
       TabOrder = 0
       OnClick = Btn_BeginClick
+    end
+    object RadGroup_MinerType: TRadioGroup
+      Left = 454
+      Top = 93
+      Width = 185
+      Height = 41
+      Caption = 'Miner type'
+      Columns = 2
+      Items.Strings = (
+        'Alpha'
+        'Heuristic')
+      TabOrder = 2
     end
   end
   object Mem_Log: TMemo

@@ -41,3 +41,7 @@ v1.4
 v1.5
         - New units: Miner, MinerResults, PetriHandler
         - Alpha miner implemented
+v1.6
+        - Miner results now draws arrows properly
+        - Heuristic miner implemented
+        - Adjusted main menu > Mining

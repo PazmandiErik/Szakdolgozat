@@ -18,7 +18,7 @@ uses
 {$REGION 'Global Constants'}
 const
   WM_KILLCONTROL = WM_USER + 1;
-  CURRENT_VERSION = '1.5';
+  CURRENT_VERSION = '1.6';
 {$ENDREGION}
 
 type
@@ -97,7 +97,6 @@ type
     Tim_FlowGenerateDebugger: TTimer;
     GenerateData1: TMenuItem;
     Mining1: TMenuItem;
-    Alphaminer1: TMenuItem;
     procedure Btn_StartRecordClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Act_Hotkey_RecordExecute(Sender: TObject);
@@ -130,7 +129,7 @@ type
     procedure StartRecordingInput1Click(Sender: TObject);
     procedure Tim_FlowGenerateDebuggerTimer(Sender: TObject);
     procedure GenerateData1Click(Sender: TObject);
-    procedure Alphaminer1Click(Sender: TObject);
+    procedure Mining1Click(Sender: TObject);
   protected
     procedure KillControl(var message: TMessage); message WM_KILLCONTROL;
     procedure WMSysCommand(var msg: TWMSysCommand); message WM_SYSCOMMAND;
@@ -540,12 +539,6 @@ begin
 end;
 {$ENDREGION}
 
-{$REGION '[Form - menu click] Alphaminer1 Click'}
-procedure TForm1.Alphaminer1Click(Sender: TObject);
-begin
-  Form_Miner.Show;
-end;
-{$ENDREGION}
 {$REGION '[Form - menu click] Generate data Click'}
 procedure TForm1.GenerateData1Click(Sender: TObject);
 begin
@@ -616,6 +609,12 @@ end;
 procedure TForm1.Load1Click(Sender: TObject);
 begin
   LoadFlow('user');
+end;
+{$ENDREGION}
+{$REGION '[Form - menu click] Mining1 Click'}
+procedure TForm1.Mining1Click(Sender: TObject);
+begin
+  Form_Miner.Show;
 end;
 {$ENDREGION}
 {$REGION '[Form - menu click] New1 Click'}
