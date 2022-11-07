@@ -164,6 +164,82 @@ Első lépésként létrehoz egy lenyomati mátrixot:
 
 \textit{Forrás: \cite{wiki:001}}
 
+\Section{Heurisztikus Bányász}
+
+Az Alpha-algoritmushoz hasonlóan ez is egy folyamatbányászati technika, mely lehetőve teszi eseménynaplókból információ kinyerését.
+
+Ennek a sikeresességéhez, az események sorrendjét csupán az egyes esetekben veszi figyelembe, azaz nem számít a sorrendjük esetek között.
+
+\subsection{Működése}
+
+Ahhoz, hogy egy folyamatmodellt meg lehessen találni egy eseménynapló alapján, azt elemezni szükséges.
+
+Találni kell okozati függéséget, például ha egy tevékenységet mindig követ egy másik adott tevékenység, akkor nagy valószínűséggel feltételezhető, hogy függéségi reláció van közöttük. 
+
+Ezeknek a relációknak az elemzéséhez vegyük az alábbiakat:
+
+\begin{definition}{\textit{(Heurisztikus bányász):}} Legyen $W$ egy eseménynapló adott $T$ felett, azaz $W \subseteq T^*$. Emellett legyen $a,b \in T:$
+\begin{enumerate}
+
+\item $ a>_W b $, ha létezeik $\sigma = t_1 t_2 t_3 \ldots t_n $ trace és $i \in \{1, \ldots ,n-1\}$ úgy, hogy $\sigma \in W$ és $t_i=a$, valamint $t_{i+1}=b$,
+\item $ a \rightarrow_W b $, ha $a>_W b$ és $b\ngtr_W a$, 
+\item $ a\#_Wb $, ha $a \ngtr_W b$ és $b\ngtr_W a$,
+\item $a\parallel_Wb $, ha $a>_W b$ és $b>_Wa$,
+\item $a >>_Wb$, ha létezik $\sigma = t_1 t_2 t_3 \ldots t_n $ trace és $i \in \{1, \ldots ,n-2\}$ úgy, hogy $\sigma \in W$ és $t_i=a$, $t_{i+1}=b$ és $t_{i+2}=a$,
+\item $a>>>_Wb$, ha létezik $\sigma = t_1 t_2 t_3 \ldots t_n $ trace, $i<j$ és $i,j \in \{1,\ldots,n\}$ úgy, hogy $\sigma \in W$ és $t_i=a$, $t_j=b$
+
+\end{enumerate}
+\end{definition}
+
+\subsection{Lépései}
+
+\subsubsection{Első lépés: a függőségi gráf bányászata}
+
+ A Heurisztikus Bányász kiindulópontja az úgynevezett \textit{Függőségi gráf} felépítése. Ez egy gyakoriság alapú rendszer, mely azt mutatja meg, hogy mennyire lehetünk biztosak abban, hogy valóban létezeik a függőségi reláció két esemény között.
+
+A kiszámított értékeket arra lehet használni egy heurisztikus keresésben, hogy megkapjuk a helyes függőségi relációt.
+
+Legyen $W$ egy eseménynapló adott $T$ felett, valamint $a,b \in T$. Ekkor $|a>_W b|$ annak a száma, hogy $a>_Wb$ mennyiszer fordul elő $W$-ben és
+\[
+a \Rightarrow_W b = \left(\frac{|a>_Wb|-|b>_Wa|}{|a>_Wb|+|b>_Wa|+1}\right)
+\]
+
+Fontos megjegyezni, hogy ez alapján $a\Rightarrow_Wb$ értéke mindig -1 és 1 között van. Egy magas érték alapján erősen feltételezhető, hogy létezik a függőségi relacíó.
+
+\subsubsection{Második lépés: a ciklusok felismerése}
+
+Egy folyamatban előfordulhat, hogy egy adott tevékenység többször kerül végrehajtás\hyp{}ra. Ez tipikusan ciklusnak felel meg az adott modellben.
+
+A távoli ciklusok (pl.: ...ABCABCABC...) nem jelentenek problémát a Heurisztikus bányásznak, azonban az egyes hosszúságú (pl.: ACB, ACCB, ACCCB, ... tracekben) és kettes hosszúságú (pl. olyan tracek mint: ACDB, ACDCDB, ACDCDCDB) ciklusoknál a $C\Rightarrow_WC$ és $C\Rightarrow_WD$ értéke mindig nagyon alacsony.
+
+Szerencsére nagyon egyszerű módon lehet definiálni a függőség mértékét ezekre a ciklusokra. Legyen $W$ egy eseménynapló adott $T$ felett, valamint $a,b \in T$. Ekkor $|a>_W b|$ annak a száma, hogy $a>_Wb$ mennyiszer fordul elő $W$-ben, illetve $|a>>_Wa|$ annak a száma, hogy $a>>_Wb$ mennyiszer fordul elő W-ben.
+\[
+a\Rightarrow_Wa=\left(\frac{|a>_Wa|}{|a>_Wa|+1}\right)
+\]
+\[
+a\Rightarrow_{2\ W} b=\left(\frac{|a>>_Wb|+|b>>_Wa|}{|a>>_Wb|+|b>>_Wa|+1}\right)
+\]
+
+\subsubsection{Harmadik lépés: a távoli függőségek feltérképezése}
+
+Néhány folamatmodellben, két tevékenység közül történő választás nem feltétlenül egy adott lépésben dől el, hanem a folyamatmodell más részein történő választásoktól függhet.
+
+\begin{figure}[h!]
+\begin{center}
+\caption{\textbf{Folyamatmodell távoli függőséggel}}
+\includegraphics[width=\textwidth,keepaspectratio=true]{images/img_heuristic_longdistance}
+\label{fig:plan}
+\end{center}
+\end{figure}
+
+A \textbf{2.7}-es ábrán látható egy távoli függőség felépítése. \textit{D} tevékenység végrehajtása után \textit{E} és \textit{F} tevékenységek közül lehet választani. Azonban ezt az \textit{E} és \textit{F} közötti választást egy korábbi, \textit{B} és \textit{C} közüli választás előzi meg. Egyértelműen, ezeket a nem-lokális viselkedéseket kifejezetten nehéz bányászni az olyan megközelítésekkel melyek bináris információ alapján ($a>_Wb$) működnek. Csupán néhány algoritmus képes sikeresen bányászni őket.
+
+Azt az eseménynaplót amelyet a \textbf{2.7}-es ábra folyamatmodelle alapján kapunk, a Heurisztikus Bányász eddig bemutatott állapotában úgy fogja elemezni, hogy a függőségi gráfban nem fog szerepelni a $B\rightarrow E$ és $C\rightarrow F$ kapcsolat. Azonban az említett $a>>>_Wb$ reláció erősen jelezni fogja, hogy \textit{B}-t mindig követi \textit{E}, \textit{C}-t pedig \textit{F}. Például ha |\textit{B}| a gyakorisága \textit{B}-nek, akkor $B\Rightarrow_W^l E = |B >>>_WE|/|B|+1$ értéke 1.0-hoz közeli lesz, azonban sok magas $\Rightarrow_W^l $ érték már összhangban van a folyamatmodellel. Ennek megfelelően, a \textbf{2.7}-es ábra alapján az $A\Rightarrow_W^lD$ értéke közel lesz 1.0-hoz, viszont nincsen szükség a plusz függőségi relációra.
+
+Ezt az alapján lehet is ellenőrizni, hogy az eddig bányászott folyamatmodellen leteszteljük, hogy lehetséges-e \textit{A}-ból a végállapotba (\textit{G}) eljutni anélkül, hogy áthalad\hyp{}nánk \textit{D} tevékenységen. Csakis akkor ha ez lehetséges, akkor kerül a folyamatmodell frissítésre az extra \textit{A}-ból \textit{D}-be függőségi relációval.
+
+\textit{Forrás: \cite{book:heuristic}}
+
 \Section{Robotic Process Automation} 
 
 A Robotikus Folyamatautomatizálás (továbbiakban: RPA) egy olyan szoftvertechnoló\hyp{}gia, mely lehetővé teszi, hogy az erre specializált szoftverek emberi felhasználót emulál\hyp{}va lépjenek kapcsolatba a számítógépek digitális felületeivel.
@@ -196,10 +272,6 @@ Alább található néhány mai rendszer, melyeket a technológia úttörőjéne
 	\item Automaton Anywhere
 	\item Kofax
 \end{enumerate}
-
-\subsection{A technológia jövője}
-
-Mivel egy automatizációs technológia jövőjéről van szó, ezért az RPA nem egy kis dolog ami feltehetően el fog tűnni, hanem nagy valószínűséggel befolyásolni fogja a munkaerőpiac jövőjének egészét...... (folytatni / elvetni?)
 
 \Section{Delphi}
 
