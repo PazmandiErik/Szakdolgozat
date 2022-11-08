@@ -1,22 +1,28 @@
 \Chapter{Koncepció}
 
-\Section{Alpha-algoritmus} 
+\Section{Folyamatelemzés}
 
-Az Alpha algoritmus (vagy Alpha bányász) mint folyamatelemzési algoritmus célja, hogy eseménysorozatok halmazából egy ok-okozat rendszert építsen fel. Először van der Aalst, Weijters és Măruşter hozta be a köztudatba. A működésében az eseménysorok halmazát nevezhetjük eseménynaplónak is. Ez az eseménynapló úgynevezett trace hal\hyp{}mazoknak a halmaza, egy trace pedig adott tevékenységnek a sorozata.
+A dolgozatban ismertetésre kerül két folyamatelemzési algoritmus, melyek célja, illetve számos paramétere átfedésben van. Ezeknek a folyamatelemezési algoritmusoknak a célja, hogy eseménysorozatok halmazából egy ok-okozat rendszert építsen fel.
 
-Az Alpha bányász volt a legelső folyamatbányászati módszer amit valaha javasoltak és egy egész jó rálátást biztosít a folyamatbányászat céljára, valamint arra, hogy a folyamatokban lévő különböző tevékenységek hogyan is vannak végrehajtva. Emelett, az Alpha bányász szolgált számos újabb folyamatbányászati technika (pl.: Heurisztikus bányász, genetikus bányászat) alapjaként.
-	
+A működésükben az eseménysorok halmazát nevezhetjük eseménynaplónak is. Ez az eseménynapló úgynevezett trace halmazoknak a halmaza, egy trace pedig adott tevékenységnek a sorozata.
+
+\subsection{Eseménynapló}
+Az eseménynapló az elsődleges szükséglet bármely folyamatbányászati algoritmus alkal\hyp{}mazásához.
+
+Az eseménynapló a következőket tartalmazza: egyedi azonosító az esethez, tevékeny\hyp{}ség megnevezése valamint egy időbélyeg. Egy eseménynaplót akár tevékenységek halma\hyp{}zának halmazaként is lehet ábrázolni.
+
 \begin{definition}{\textit{(Munkafolyamati trace)}} Egy string a $T$ ábécé feladatai közül.\end{definition}
 \begin{definition}{\textit{(Munkafolyamati napló)}} Munkafolyamati tracek halmaza.\end{definition}
 
-\subsection{Rövid leírása}	
+Számos gyakorlati megvalósításban a munkafolyamati naplót a munkafolyamattól függően át kell formázni, hogy egyértelműen tartalmazza a szükséges adatokat, majd az így kapott eredményt nevezzük eseménynaplónak.
 
-Az algoritmus egy munkafolyamati naplót $W \subseteq  T^*$ kap bemenetként, és eredményként egy munkafolyamati hálót épít fel.
+\Section{Alpha-algoritmus}
+
+Az Alpha bányász volt a legelső folyamatbányászati módszer amit valaha javasoltak és egy egész jó rálátást biztosít a folyamatbányászat céljára, valamint arra, hogy a folyamatokban lévő különböző tevékenységek hogyan is vannak végrehajtva. Emelett, az Alpha bányász szolgált számos újabb folyamatbányászati technika (pl.: Heurisztikus bányász, genetikus bányászat) alapjaként. Először van der Aalst, Weijters és Măruşter hozta be a köztudatba. 
+
+Az algoritmus egy munkafolyamati naplót $W \subseteq  T^*$ kap bemenetként, és eredmény\hyp{}ként egy munkafolyamati hálót épít fel.
 
 Ezt az alapján csinálja meg, hogy megvizsgálja az általános kapcsolatokat az egyes feladatok között. Például egy adott feladat lehet, hogy minden esetben megelőz egy másik feladatot, ami egy hasznos információ.
-
-\subsection{Eseménynapló}
-Az eseménynapló az elsődleges szükséglet bármely folyamatbányászati algoritmus alkal\hyp{}mazásához. Az eseménynapló a következőket tartalmazza: egyedi azonosító az esethez, tevékenység megnevezése valamint egy időbélyeg. Egy eseménynaplót akár tevékenysé\hyp{}gek halmazának halmazaként is lehet ábrázolni.
 
 Az Alpha bányász szabályai szerint az egyes tevékenységek között az alábbi 4 féle kapcsolat egyike lehetséges:
 \begin{enumerate}
@@ -144,7 +150,7 @@ Első lépésként létrehoz egy lenyomati mátrixot:
 \item mivel minden $T_W$ átmenet $F_W$-úton van $i_W$-ből $o_W$-be, így valóban egy munka\hyp{}folyamati háló.
 \end{itemize}
 
-\noindent Ehhez a példához az alábbi petri háló jön létre az Alpha bányász használatával
+\noindent Ehhez a példához az alábbi petri háló jön létre az Alpha bányász használatával.
 \begin{figure}[h]
 \caption{Példa kimeneti petri háló}
 \begin{center}
