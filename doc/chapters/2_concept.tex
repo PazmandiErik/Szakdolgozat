@@ -174,7 +174,7 @@ Első lépésként létrehoz egy lenyomati mátrixot:
 
 Az Alpha-algoritmushoz hasonlóan ez is egy folyamatbányászati technika, mely lehetőve teszi eseménynaplókból információ kinyerését.
 
-Ennek a sikeresességéhez, az események sorrendjét csupán az egyes esetekben veszi figyelembe, azaz nem számít a sorrendjük esetek között.
+Ennek a sikerességéhez, az események sorrendjét csupán az egyes esetekben veszi figyelembe, azaz nem számít a sorrendjük esetek között.
 
 \subsection{Működése}
 
@@ -201,13 +201,13 @@ Ezeknek a relációknak az elemzéséhez vegyük az alábbiakat:
 
 \subsubsection{Első lépés: a függőségi gráf bányászata}
 
- A Heurisztikus Bányász kiindulópontja az úgynevezett \textit{Függőségi gráf} felépítése. Ez egy gyakoriság alapú rendszer, mely azt mutatja meg, hogy mennyire lehetünk biztosak abban, hogy valóban létezeik a függőségi reláció két esemény között.
+ A Heurisztikus Bányász első lépése az úgynevezett \textit{függőségi gráf} felépítése. Ez egy gyakoriság alapú rendszer, mely azt mutatja meg, hogy mennyire lehetünk biztosak abban, hogy valóban létezeik függőségi reláció az egyes események között.
 
 A kiszámított értékeket arra lehet használni egy heurisztikus keresésben, hogy megkapjuk a helyes függőségi relációt.
 
 Legyen $W$ egy eseménynapló adott $T$ felett, valamint $a,b \in T$. Ekkor $|a>_W b|$ annak a száma, hogy $a>_Wb$ mennyiszer fordul elő $W$-ben és
 \[
-a \Rightarrow_W b = \left(\frac{|a>_Wb|-|b>_Wa|}{|a>_Wb|+|b>_Wa|+1}\right)
+a \Rightarrow_W b = \left(\frac{|a>_Wb|-|b>_Wa|}{|a>_Wb|+|b>_Wa|+1}\right).
 \]
 
 Fontos megjegyezni, hogy ez alapján $a\Rightarrow_Wb$ értéke mindig -1 és 1 között van. Egy magas érték alapján erősen feltételezhető, hogy létezik a függőségi relacíó.
@@ -283,7 +283,7 @@ Alább található néhány mai rendszer, melyeket a technológia úttörőjéne
 
 A dolgozathoz készült szoftver Delphi nyelven íródott, így fontos legalább nagyvona\hyp{}lakban ismerni a nyelvet, hogy tudjuk miért is.
 
-A Delphi egy általános célú erősen típusos objektum orientált programozási nyelv és szoftvertermék ami az Object Pascal programozási nyelv Delphi dialektusát használja, integrált fejlesztői környezetet biztosít, újabban a gyors alkalmazásfejlesztés (RAD, Rapid application development) szoftverfejlesztési elv szerint. A Delphi compilerei natív kódot generálnak a célrendszertől függően, legyen az Microsoft Windows, macOS, iOS, Android vagy Linux (x64).
+A Delphi egy általános célú, erősen típusos, objektum orientált programozási nyelv és szoftvertermék ami az Object Pascal programozási nyelv Delphi dialektusát használ\hyp{}ja, integrált fejlesztői környezetet biztosít, újabban a gyors alkalmazásfejlesztés (RAD, Rapid application development) szoftverfejlesztési elv szerint. A Delphi compilerei natív kódot generálnak a célrendszertől függően, legyen az Microsoft Windows, macOS, iOS, Android vagy Linux (x64).
 
 \textit{\cite{delphi:001}}
 
@@ -292,7 +292,7 @@ Az ,,anyanyelve" a Delphinek a Pascal, ami pedig a modellje nagy részét az Alg
 
 1983-ban jelent meg az első Turbo Pascal a Borland jóvoltából, ami már integrált fejlesztői környezettel rendelkezett. 1995-ben vezették be a RAD szoftverfejlesztési elvre épülülő környezetet, amit Delphi-nek neveztek, ezáltal átalakítva a Pascal nyelvet egy objektum-orientált vizuális programozási nyelvvé. A célja ennek elsősorban az volt, hogy ennek az új terméknek központi részét képezzék az adatbázis eszközök és kapcsolatok.
 
-2006-ban a Borland átadta a fejlesztőeszközöket a CodeGear nevű leányvállalatá\hyp{}nak, majd ezt a leáanyvállalatot 2008-ban eladta az Embarcadero Technologies-nek. Ez az új cég megtartotta a régi fejlesztői divíziót és számos új verziót dobott piacra. 2015-ben az Idera Software nevű cég pedig felvásárolta az Embarcadero-t és mind a mai napig ugyanúgy Embaracadero márka alatt működteti a fejlesztői eszközök divízióját.
+2006-ban a Borland átadta a fejlesztőeszközöket a CodeGear nevű leányvállalatá\hyp{}nak, majd ezt a leányvállalatot 2008-ban eladta az Embarcadero Technologies-nek. Ez az új cég megtartotta a régi fejlesztői divíziót és számos új verziót dobott piacra. 2015-ben az Idera Software nevű cég pedig felvásárolta az Embarcadero-t és mind a mai napig ugyanúgy Embaracadero márka alatt működteti a fejlesztői eszközök divízióját.
 
 Az évek alatt rendkívül sok modernizáción ment át a Delphi. OLE automatizáció és változó adattípus támogatásától kezdve, DLL debugoláson és XML támogatáson keresztül egészen a multi-platform alkalmazásokig és az in-line változó deklarálásig.
 
@@ -306,7 +306,7 @@ Bár közel sem a legelterjedtebb nyelv, számos előnnyel rendelkezik sok mási
 \begin{enumerate}
 	\item \textbf{Könnyen olvasható kód}: Már eredetileg a Pascal megalkotásánál az egyik fő cél az volt, hogy oktatási célra lehessen használni, emberi szemmel is könnyen olvasható legyen a komplex alacsony-szintű kód. Erre egy nagyon jó példa a "\{" és "\}" karakterek (amiket csak a memóriával való spórolás miatt jelöltek így) "begin" és "end" kulcsszóra való cseréje.
 	\item \textbf{Multi-platformitás}: A megfelelően megírt (OS-független) kódot néhány kattin\hyp{}tással le lehet fordítani a legismertebb operációs rendszerek natív kódjára.
-	\item \textbf{Natív kód}: Az alkalmazás lefordításával natív kódot kapunk, ami azért előny, mert semmilyen egyéb keretrendszer telepítésére nincsen szükségem (pl.: MS C++ Runtime Environment, Java Runtime Environment, stb...)
+	\item \textbf{Natív kód}: Az alkalmazás lefordításával natív kódot kapunk, ami azért előny, mert semmilyen egyéb keretrendszer telepítésére nincsen szüksége (pl.: .NET keretrendszer, Java Runtime Environment, stb...)
 	\item \textbf{Adatbázis támogatás}: Számos adatbázis kapcsolatot és adatfeldolgozási mód\hyp{}szert beépített módon támogat.
 	\item \textbf{Fordítási sebesség}: A mai napig az egyik leggyorsabb a fordítási sebessége más fejlesztőeszközökhöz képest, ezáltal felgyorsíva magát a fejlesztési és debugolási folyamatokat.
 \end{enumerate}
@@ -316,7 +316,7 @@ Bár közel sem a legelterjedtebb nyelv, számos előnnyel rendelkezik sok mási
 Az előző alfejezetben felsoroltaknak megfelelően kiderült, hogy a Delphi az egy kifeje\hyp{}zetten robosztus és erőteljes programozási nyelv. Ez sok nyelvről elmondható természe\hyp{}tesen, viszont az alábbi két pont miatt került kiválasztásra a dolgozathoz:
 
 \begin{itemize}
-	\item \textbf{Modern Windows API}: A fejlesztett szoftver (mint a legtöbb RPA eszköz) közvetlen viszonyban van a Windows API-val, hiszen az operációs rendszer teszi elérhetővé az egyes erőforrásokat (pl. rögzíteni a felhasználó bevitelét még akkor is ha a program háttérben van), illetve teszi lehetővé az input injektálását a folyamat visszajátszásához.
+	\item \textbf{Modern Windows API}: A fejlesztett szoftver (mint a legtöbb RPA eszköz) közvetlen kapcsolatban van a Windows API-val, hiszen az operációs rendszer teszi elérhetővé az egyes erőforrásokat (pl. rögzíteni a felhasználó bevitelét még akkor is ha a program háttérben van), illetve teszi lehetővé az input injektálását a folyamat visszajátszásához.
 	\item \textbf{Natív kód}: Mivel natív kódra kerül fordításra a programkód, ezért bármely Windows (Vista vagy újabb) operációs rendszerrel rendelkező számítógépen fut\hyp{}tatható a program bármiféle keretrendszer nélkül.
 \end{itemize}
 
