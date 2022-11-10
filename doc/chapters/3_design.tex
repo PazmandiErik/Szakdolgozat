@@ -8,8 +8,8 @@ A legmagasabb szinten az alábbi ábra nyújtja a legtisztább áttekintését a
 
 \begin{figure}[h!]
 \begin{center}
-\caption{\textbf{High-level áttekintő ábra}}
 \includegraphics[width=\textwidth,keepaspectratio=true]{images/img_plan_1}
+\caption{\textbf{High-level áttekintő ábra}}
 \label{fig:plan}
 \end{center}
 \end{figure}
@@ -24,7 +24,7 @@ A legmagasabb szinten az alábbi ábra nyújtja a legtisztább áttekintését a
 	\item \textbf{Folyamat időzítő}: A Windowsba integrált rendszert felhasználva ütemez / időzít folyamatokat.
 	\item \textbf{Adatbányász}: Az Alpha-algoritmust implementálva folyamatelemzést hajt végre több folyamaton.
 	\item \textbf{Eredmény ábrázoló}: Az Adatbányász által elvégzett folyamatelemzés eredmé\hyp{}nyeit jeleníti meg.
-	\item \textbf{Petri háló kezelő}: A petri-hálót mint struktúra, valamint a hozzátartozó függvé\hyp{}nyeket a szoftver számára értelmezhető módon implementálja.
+	\item \textbf{Petri-háló kezelő}: A Petri-hálót mint struktúra, valamint a hozzátartozó függ\hyp{}vényeket a szoftver számára értelmezhető módon implementálja.
 	\item \textbf{Kiegészítő funkciótár}: Számos hasznos funkció gyűjteménye, melyet a többi alrendsze használ.
 	\item \textbf{Konfiguráció kezelő}: Futásidők között felhasználói preferenciák és beállítások tárolásáért és betöltéséért felel.
 \end{itemize}
@@ -39,7 +39,7 @@ Ebben az alfejezetben bemutatásra kerül, hogy hogyan is kapcsolódik pontosan 
 
 Először is pontosan meg kell határozni, hogy milyen lépésekből áll az algoritmus.
 
-\begin{definition}{\textit{($\alpha$-algoritmus):}} Legyen $L$ egy eseménynapló adott $E$ események hal\hyp{}maza felett. Ekkor a kimeneti $\alpha (L)$ petri hálót az alábbi módon határozzuk meg:
+\begin{definition}{\textit{($\alpha$-algoritmus):}} Legyen $L$ egy eseménynapló adott $E$ események hal\hyp{}maza felett. Ekkor a kimeneti $\alpha (L)$ Petri-hálót az alábbi módon határozzuk meg:
 \begin{enumerate}
 	\item Definiáljuk az összes eseményt.\\
 	\[
@@ -77,7 +77,7 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 		&Y_L \land b \in B \} \cup \{ (i_L,e) | e \in E_I \} \cup \{ (e,o_L) | e \in E_O\},
 	\end{aligned}
 	\end{equation*}
-	\item Visszatérünk a petri hálóval.
+	\item Visszatérünk a Petri-hálóval.
 	\[
 		\alpha(L) = (P_L, E_L, F_L).
 	\]
@@ -90,12 +90,12 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 \begin{example}
 	Itt három előre létrehozott folyamaton kerül alkalmazásra az algoritmus. A folyamatok egyszerűek, hogy szemléletes legyen a példa, viszont ugyanezzel a mód\hyp{}szerrel több száz vagy akár több ezer hosszú folyamaton is alkalmazható az algoritmus.
 	
-	Maguk a folyamatok szolgálnak bemenetként, részeredményekként eseménynapló és lenyomati mátrix jön létre, kimentként pedig egy olyan petri háló kerül generálásra mely leírja a folyamat modelljét.
+	Maguk a folyamatok szolgálnak bemenetként, részeredményekként eseménynapló és lenyomati mátrix jön létre, kimentként pedig egy olyan Petri-háló kerül generálásra mely leírja a folyamat modelljét.
 
 	Vegyük az alábbi táblázatot.
 	\newpage
 
-	\begin{figure}[h!]
+	\begin{table}[h!]
 	\begin{center}
 	\caption{Beviteli folyamatok}
 	\begin{tabular}{|| c | c | c | c | c | r ||}
@@ -127,7 +127,7 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 	\end{tabular}
 	\label{fig:planexample}
 	\end{center}
-	\end{figure}	
+	\end{table}	
 
 	Az Alpha-algoritmus alkalmazásában, mint bármely folyamatbányászati algorit\hyp{}musnál, első lépésként ezekből az eseményekből fel kell építeni az eseménynaplót amiből később dolgozik az algoritmus. Ez a lépés konkrétan arról szól, hogy a már meglévő folyamatok az Alpha-algoritmusnak szükséges formátumra kerülnek átalakításra.
 	
@@ -141,7 +141,7 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 	Ezeknek megfelelően az alábbi eseménynaplót kapjuk:
 	\newpage
 
-	\begin{figure}[h]
+	\begin{table}[h]
 	\begin{center}
 	\caption{Eseménynapló}
 	\begin{tabular}{|| c | c | c ||}
@@ -173,7 +173,7 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 	\end{tabular}
 	\label{fig:planexample}
 	\end{center}
-	\end{figure}	
+	\end{table}	
 	
 	Miután megvan az eseménynapló, a következő két lépésben meghatározzuk a beme\hyp{}neti- és kimeneti események halmazait:
 	\begin{enumerate}
@@ -185,7 +185,7 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 
 	Ezzel jön létre az alábbi lenyomati mátrix:
 	
-	\begin{figure}[h]
+	\begin{table}[h]
 	\begin{center}
 	\caption{Lenyomati mátrix}
 	\begin{tabular}{|c | c | c | c | c | c|}
@@ -205,14 +205,14 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 	\end{tabular}
 	\label{fig:planexample}
 	\end{center}
-	\end{figure}
+	\end{table}
 
 	Ezen a mátrixon kerül ábrázolásra az összes esemény közötti kapcsolat. Több szem\hyp{}pontból is hasznos ez a mátrix, többek között a struktúrája is megfelelő ahhoz, hogy program szinten meghatározzuk a következő lépésben a lehetséges halmazpárokat, vala\hyp{}mint emberi szemmel is kifejezetten könnyen értelmezhető.
 
 	Ezt a mátrixot felhasználva az alábbi halmazpárok lehetségesek a jelenlegi példában:
 	\newpage
 
-	\begin{figure}[h]
+	\begin{table}[h]
 	\begin{center}
 	\caption{Lehetséges halmazpárok}
 	\begin{tabular}{|| c | c ||}
@@ -242,11 +242,11 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 	\end{tabular}
 	\label{fig:planexample}
 	\end{center}
-	\end{figure}	
+	\end{table}	
 
 	Következő lépésként ezekből a halmazpárokból kell eltávolítani a nem-maximálisak\hyp{}at, azaz azokat amik részhalmazai egy másiknak. Ezt program szinten egy többszörös ciklus segítségével könnyedén el lehet végezni, jelen példában pedig az alábbi négy halmazpár maradt:
 	
-	\begin{figure}[h]
+	\begin{table}[h]
 	\begin{center}
 	\caption{Maradék halmazpárok}
 	\begin{tabular}{|| c | c ||}
@@ -264,17 +264,17 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 	\end{tabular}
 	\label{fig:planexample}
 	\end{center}
-	\end{figure}
+	\end{table}
 
 	Miután ezek a halmazpárok meghatározásra kerültek, helyek $(p_1-p_4)$  lesznek hozzájuk rendelve. Ezekhez a helyekhez létrehozásra kerülnek a megfelelő bemeneti és kimeneti átmenetek, valamint a végső bemeneti és kimeneti állapotok is.
 
-	Amint ez megvan, berajzolásra kerülnek a kapcsolatok is, a végén pedig a következő petri háló kerül megjelenítésre.
+	Amint ez megvan, berajzolásra kerülnek a kapcsolatok is, a végén pedig a következő Petri-háló kerül megjelenítésre.
 	\newpage
 
 	\begin{figure}[h!]
 	\begin{center}
-	\caption{\textbf{Kimeneti petri háló}}
 	\includegraphics[width=\textwidth,keepaspectratio=true]{images/img_plan_2}
+	\caption{Kimeneti Petri-háló}
 	\label{fig:plan}
 	\end{center}
 	\end{figure}
@@ -302,36 +302,36 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 
 \Section{Implementáció}
 
-A program gyakorlati megvalósítása egy-két apróságtól eltekintve megegyezik a terve\hyp{}zettel. Az alapvető stuktúra az tartva lett, az egymáshoz tartozó funkciók, változók és kódrészletek külön egységekbe (továbbiakban: unitok) lettek szedve, így csoportosítva az egyes szoftverfunkciókat.
+A program gyakorlati megvalósítása egy-két apróságtól eltekintve megegyezik a terve\hyp{}zettel. Az alapvető stuktúrát megtartotta, az egymáshoz tartozó funkciók, változók és kódrészletek külön egységekbe (továbbiakban: unitok) lettek szervezve, így csoportosít\hyp{}va az egyes szoftverfunkciókat.
 
-Ezek a unitok többféle kapcsolatban állhatnak egymással, az egymásra való hivatko\hyp{}zásuknak függvényében. Ezeket a kapcsolatokat a következő ábra demonstrálja.
+Ezek a unitok többféle kapcsolatban állhatnak egymással, az egymásra való hivatko\hyp{}zásuknak függvényében. Ezeket a kapcsolatokat a 3.3 ábra demonstrálja.
 
 \begin{figure}[h]
 	\begin{center}
-		\caption{Unitok kapcsolatai}
-		\includegraphics[width=0.8\textwidth, keepaspectratio=true]{images/unitok_kapcsolati_abra}\\
+		\includegraphics[width=0.95\textwidth, keepaspectratio=true]{images/unitok_kapcsolati_abra}\\
 		\label{fig:example}
 	\end{center}
+	\caption{Unitok kapcsolatai}
 \end{figure}
 
-Pirossal azok a unitok vannak ábrázolva melyekhez tartozik grafikus felület is, a további színek pedig az egyes funkciók csoportosítására szolgálnak. Részletesebben a unitokról:
+Pirossal azok a unitok láthatók melyekhez tartozik grafikus felület is, a további színek pedig az egyes funkciók csoportosítására szolgálnak. Részletesebben a unitokról a következő pontokban olvashatunk.
 
 \begin{itemize}
 	\item{
-		\textbf{Unit\_Main}: Ez a program főegysége, ebben került implementálásra a főablak és annak felhasználói felülete. Számos funkciót lát el:
+		\textbf{Unit\_Main}: Ez a program főegysége, ebben került implementálásra a főablak és annak felhasználói felülete. Az alábbi feladatokat látja el.
 		\begin{enumerate}
-			\item{Implementálja a felhasználói felület objektumait, azoknak a tulajdonságait és rutinjait,}
-			\item{Inicializálja a programot futtatásnál, betölti a felhasználó konfigurációit,}
-			\item{Kezeli a program rendszertálcára való kicsinyítését,}
-			\item{Kezeli azt a néhány globális változót amik szükségesek (pl. a futtatható fájl elérési útvonala).}			
+			\item{Implementálja a felhasználói felület objektumait, azoknak a tulajdonságait és rutinjait.}
+			\item{Inicializálja a programot futtatásnál, betölti a felhasználó konfigurációit.}
+			\item{Kezeli a program rendszertálcára való kicsinyítését.}
+			\item{Kezeli azt a néhány globális változót amik szükségesek (pl.: a futtatható fájl elérési útvonala).}			
 		\end{enumerate}
 	}
 	\item{
-		\textbf{Unit\_ConfigHandler}: Konfigurációkezelő osztályt és az abba tartozó objek\hyp{}tumokat és rutinokat implementálja, melyek lehetővé teszik a futásidő alatti konfigurációs beállítások titkosítva történő tárolását.
+		\textbf{Unit\_ConfigHandler}: A konfigurációkezelő osztályt, az abba tartozó objek\hyp{}tumokat és rutinokat implementálja, melyek lehetővé teszik a futásidő alatti konfigurációs beállítások titkosítva történő tárolását.
 		\begin{lstlisting}
   TConfigHandler = class(TObject)
     configFile: string;
-    configArray : array of array of string;
+    configArray: array of array of string;
 
   public
     procedure Save(Key: string; Value: string);
@@ -360,7 +360,8 @@ A Windows API és a \textbf{Unit\_Main} által implementált rutinokra és vált
 procedure TStopFlowThread.Execute;
 begin
   repeat
-    if (GetKeyState(VK_F2) < 0) and (GetKeyState(VK_F3) < 0) then begin
+    if (GetKeyState(VK_F2) < 0) and (GetKeyState(VK_F3) < 0) then
+    begin
       Form1.Btn_StartFlowClick(stopFlowThread);
     end;
   until not runStopFlow;
@@ -382,7 +383,7 @@ begin
   until not runCursorPos;
 end;
 		\end{lstlisting}
-		Ennek a célja, az, hogy amikor a felhasználó kézileg akar egérkattintást hozzáadni az aktuális folyamathoz, akkor megkönyítse a megfelelő képernyő-koordináták meghatározását.
+		Ennek a célja, az, hogy amikor a felhasználó kézileg akar egérkattintást hozzáadni az aktuális folyamathoz, akkor megkönnyítse a megfelelő képernyő-koordináták meghatározását.
 	}
 	\item{
 		\textbf{Unit\_StopCaptureThread}: Egy olyan szálat implementáló egység, melynek feladata hasonló az előzőekben bemutatott \textbf{TStopFlowThread}-éhez.
@@ -390,7 +391,7 @@ end;
 Az eltérés annyi, hogy az \textbf{F2 + F4} billentyűkombinációt figyeli, melynek lenyo\hyp{}mására egy olyan rutint hív meg, mely leállítja az éppen futó felhasználói ese\hyp{}ménysor rögzítését.
 	}
 	\item{
-		\textbf{Unit\_LinkedListHandler}: Egy olyan struktúrát implementál, melyre a szoft\hyp{}ver összes többi folyamatkezezlő egysége épül. Az ebből a láncolt lista struktúrá\hyp{}ból példányosított elemek tartalmazzák a folyamati lépésekhez tartozó összes információt.
+		\textbf{Unit\_LinkedListHandler}: Egy olyan struktúrát implementál, melyre a szoft\hyp{}ver összes többi folyamatkezezlő egysége épül. Az ebből a láncolt lista struktúrá\hyp{}ból példányosított elemek tartalmazzák a folyamat lépéseihez tartozó összes infor\hyp{}mációt.
 
 	Először is implementál két felsorolás típust, melyek intuitív módon leírják magu\hyp{}kat:
 	\begin{lstlisting}
@@ -400,25 +401,25 @@ type
   TWaitType = (wtMil, wtSec, wtMin, wtHour);
 	\end{lstlisting}
 
-	Valamint definiálja a láncolt lista elemet és az arra hivatkozó mutatót:
+	valamint definiálja a láncolt lista elemet és az arra hivatkozó mutatót:
 	\begin{lstlisting}
   // Linked List pointer type
   PFlowElement = ^TFlowElement;
 
   // Linked List element
   TFlowElement = record
-    inputType : TInputType;
-    inputParam1 : string;
-    inputParam2 : string;
-    inputParam3 : string;
-    inputParam4 : string;
-    waitAfterAmount : integer;
-    waitAfterType : TWaitType;
-    waitAfterTypeText : string;
-    deleteButton : TButton;
-    panelObject : TPanel;
-    labelObject : TLabel;
-    NextElement : PFlowElement;
+    inputType: TInputType;
+    inputParam1: string;
+    inputParam2: string;
+    inputParam3: string;
+    inputParam4: string;
+    waitAfterAmount: integer;
+    waitAfterType: TWaitType;
+    waitAfterTypeText: string;
+    deleteButton: TButton;
+    panelObject: TPanel;
+    labelObject: TLabel;
+    NextElement: PFlowElement;
   end;
 	\end{lstlisting}
 
@@ -426,14 +427,16 @@ type
 
 	}
 	\item{
-		\textbf{Unit\_FlowHandler}: A folyamatokhoz tartozó legfonotsabb rutinokat definiál\hyp{}ja, amik a következőek:
+		\textbf{Unit\_FlowHandler}: A folyamatokhoz tartozó legfontosabb rutinokat definiál\hyp{}ja, amik a következőek:
 		\begin{enumerate}
-			\item{Folyamat mentése fájlba,}
-			\item{Folyamat betöltése állományból,}
-			\item{Folyamat generálása a felhasználói bevitelből rögzített eseméysorból,}
-			\item{Adott folyamati lépés végrehajtása, azaz input injektálása a Windows felé. pl.:
+			\item{folyamat mentése fájlba,}
+			\item{folyamat betöltése állományból,}
+			\item{folyamat generálása a felhasználói bevitelből rögzített eseméysorból,}
+			\item{adott folyamati lépés végrehajtása, azaz input injektálása a Windows felé. pl.:
 				\begin{lstlisting}
-if (currentStep.inputParam3 = 'Left') and (currentStep.inputParam4 = 'Down+Up (single)') then begin
+if (currentStep.inputParam3 = 'Left') and
+(currentStep.inputParam4 = 'Down+Up (single)') then
+begin
   mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
   mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
 end 
@@ -445,15 +448,15 @@ end
 	\item{
 		\textbf{Unit\_HookHandler}: Ennek az egységnek a feladata azoknak az objektumok\hyp{}nak, változóknak és függvényeknek az implementációja, melyek lehetővé teszik a felhasználói input rögzítését a Windows API \textit{hook}-jainak felhasználásával.
 
-A \textit{hook} egy olyan pont a rendszer üzenetkezelő mechanizmusában, ahová a szoft\hyp{}ver egy olyan szubrutint telepít mely figyeli az üzenet forgalmat a rendszerben, és feldolgozza azokat még mielőtt elérné a cél-ablakhoz tartozó eljárását.
+A \textit{hook} egy olyan pont a rendszer üzenetkezelő mechanizmusában, ahová a szoft\hyp{}ver egy olyan szubrutint telepít, mely figyeli az üzenet forgalmat a rendszerben, és feldolgozza azokat még mielőtt elérné a cél-ablakhoz tartozó eljárását.
 
-A felhasználói input rözítésénél két ilyen \textit{hook} kerül telepítésre, egy a billentyűzet üzenetsorának, a másik pedig az egérhez tartozóhoz. Ezek a telepítések a Win\hyp{}dows API által bizotsított
+A felhasználói input rözítésénél két ilyen \textit{hook} kerül telepítésre: egy a billentyűzet üzenetsornak, a másik pedig az egérhez tartozóhoz. Ezek a telepítések a Win\hyp{}dows API által biztosított
 \begin{lstlisting}
-	function SetWindowsHookEx; external user32 name 'SetWindowsHookExW';
+function SetWindowsHookEx; external user32 name 'SetWindowsHookExW';
 \end{lstlisting}
 függvény hívásával történnek.
 
-Ezeken túl az egység tartalmaz egy olyan funkciót is mely az adott konstanst (vagy karakterkódot) ember által könnyen értelmezhető szövegre fordítja, pl. \textbf{VK\_PRIOR} $\rightarrow$ \textbf{[Page Up]}, vagy \textbf{65} $\rightarrow$ \textbf{[a]}
+Ezeken túl az egység tartalmaz egy olyan funkciót is, mely az adott konstanst (vagy karakterkódot) ember által könnyen értelmezhető szövegre fordítja, pl. \textbf{VK\_PRIOR} $\rightarrow$ \textbf{[Page Up]}, vagy \textbf{65} $\rightarrow$ \textbf{[a]}
 
 	}
 	\item{
@@ -476,7 +479,7 @@ type
   end;
 		\end{lstlisting}
 
-A rutinjai lehetővé teszik, hogy más egységből (pl.: Unit\_HookHandler) is lehes\hyp{}sen frissíteni a grafikus elemeit, valamint, hogy folyamatrögzítés közben hiába látszik az ablak, akkor se legyen útban a felhasználónak.
+A rutinjai lehetővé teszik, hogy más egységből (pl.:\textbf{Unit\_HookHandler}) is lehes\hyp{}sen frissíteni a grafikus elemeit, valamint, hogy folyamatrögzítés közben hiába látszik az ablak, akkor se legyen útban a felhasználónak.
 	}
 	\item{
 		\textbf{Unit\_Scheduler}: Két egyszerű függvényt implementáló osztályt definiál, mely arra szolgál, hogy a Windows API segítségével meghívott \textit{schtasks.exe} feladatüte\hyp{}mezőbe rögzíteni, illetve onnan törölni lehessen folyamatokat.
@@ -500,7 +503,8 @@ type
     RadGroup_GenCategory: TRadioGroup;
     Spin_GenCount: TSpinEdit;
     procedure Btn_GenerateClick(Sender: TObject);
-    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormCloseQuery(Sender: TObject;
+    var CanClose: Boolean);
   private
     { Private declarations }
     procedure Generate_ComputerShutdown(count: integer);
@@ -528,7 +532,8 @@ type
     Lab_DataPath: TLabel;
     Btn_DataPath_Browse: TButton;
     Btn_Begin: TButton;
-    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormCloseQuery(Sender: TObject;
+    var CanClose: Boolean);
     procedure Btn_DataPath_BrowseClick(Sender: TObject);
     procedure Btn_BeginClick(Sender: TObject);
   private
@@ -544,7 +549,7 @@ type
 
 Amint végzett az algoritmus, az eredményeket a következő \textbf{Unit\_MinerResults} által definiált ablakban ábrázolja.
 
-A halmazpárok három-dimenziós adatstruktúraban vannak tárolva illetve kezelve, ezeknek az átlátása elég komoly odafigyelést igényel.
+A halmazpárok három-dimenziós adatstruktúrában vannak tárolva, illetve kezel\hyp{}ve. Ezeknek az értelmezése elég komoly odafigyelést igényel.
 	\begin{lstlisting}
   TArrayOfSets = array of array of array of integer;
 	\end{lstlisting}
@@ -553,10 +558,10 @@ A halmazpárok három-dimenziós adatstruktúraban vannak tárolva illetve kezel
 	\item{
 		\textbf{Unit\_MinerResults}: Azt a felületet implementáló egység, mely a választott bányász eredményeit jeleníti meg grafikusan. Ezek:
 		\begin{enumerate}
-			\item{A létrejött eseménynapló,}
-			\item{Az eseménynaplóbó létrejött lenyomati mátrix (Heurisztikus bányásznál füg\hyp{}gőségi mátrix),}
-			\item{Az összes maximális halmaz (Alpha-algoritmus esetében),}
-			\item{A kimeneti Petri-háló, melyet a \textbf{Unit\_PetriHandler} segítségével generál.}
+			\item{a létrejött eseménynapló,}
+			\item{az eseménynaplóbó létrejött lenyomati mátrix (Heurisztikus bányásznál füg\hyp{}gőségi mátrix),}
+			\item{az összes maximális halmaz (Alpha-algoritmus esetében),}
+			\item{a kimeneti Petri-háló, melyet a \textbf{Unit\_PetriHandler} segítségével generál.}
 		\end{enumerate}
 		\begin{lstlisting}
   TForm_MinerResults = class(TForm)
