@@ -32,25 +32,31 @@ Az Alpha-bányász szabályai szerint az egyes tevékenységek között az aláb
 
 \subsection{Grafikus ábrázolás}
 
+\vfill
+
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=8truecm, height=4truecm]{images/img_alpha_seq}\\
+\includegraphics[width=0.5\textwidth,keepaspectratio=true]{images/img_alpha_seq}\\
 \caption{\textbf{Szekvencia: A $\rightarrow$ B}}
 \label{fig:example}
 \end{center}
 \end{figure}
 
+\vfill
+
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=8truecm, height=6truecm]{images/img_alpha_xor}\\
+\includegraphics[width=0.5\textwidth,keepaspectratio=true]{images/img_alpha_xor}\\
 \caption{\textbf{XOR-elágazás: A $\rightarrow$ B, A $\rightarrow$ C} és \textbf{B \# C}}
 \label{fig:example}
 \end{center}
 \end{figure}
 
+\vfill
+
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=8truecm, height=6truecm]{images/img_alpha_and}\\
+\includegraphics[width=0.5\textwidth,keepaspectratio=true]{images/img_alpha_and}\\
 \caption{\textbf{ÉS-elágazás: A $\rightarrow$ B, A $\rightarrow$ C} és \textbf{B $\parallel$ C}}
 \label{fig:example}
 \end{center}
@@ -165,7 +171,7 @@ Első lépésként létrehoz egy lenyomati mátrixot.
 \item \textbf{Ciklusok}: Az Alpha-bányász nem képes 1-es és 2-es hosszúságú ciklusok felisme\hyp{}résére a folyamatmodellben.
 \item A helyi függőségeket gyakran nem veszi észre az Alpha-bányász.
 \end{itemize}
-\cite{wiki:001}
+\cite{1316839}
 
 \Section{Heurisztikus Bányász}
 
@@ -204,7 +210,6 @@ Legyen $W$ egy eseménynapló adott $T$ felett, valamint $a,b \in T$. Ekkor $|a>
 \[
 a \Rightarrow_W b = \left(\frac{|a>_Wb|-|b>_Wa|}{|a>_Wb|+|b>_Wa|+1}\right)
 \]
-
 arány a függőség erősségét jelzi. Fontos megjegyezni, hogy ez alapján $a\Rightarrow_Wb$ értéke mindig -1 és 1 között van. Egy magas érték alapján erősen feltételezhető, hogy létezik a függőségi relacíó.
 
 \subsubsection{Második lépés: a ciklusok felismerése}
@@ -244,7 +249,7 @@ Ezt az alapján lehet ellenőrizni, hogy az eddig bányászott folyamatmodellen 
 
 A Robotikus Folyamatautomatizálás (továbbiakban: RPA) egy olyan szoftvertechnoló\hyp{}gia, mely lehetővé teszi, hogy az erre specializált szoftverek emberi felhasználót emulál\hyp{}va lépjenek kapcsolatba a számítógépek digitális felületeivel.
 
-Minden egyes ilyen szoftvernek más az eszköztára, van amelyik azt tudja értelmezni, hogy mi van a képernyő. Van amelyik felismer és kinyer adatokat, viszont abban mindegyik osztozik, hogy adott lépésekből meghatározott folyamatokat hajt végre.
+Minden egyes ilyen szoftvernek más az eszköztára, van amelyik azt tudja értelmezni, hogy mi van a képernyőn, van amelyik felismer és kinyer adatokat, viszont abban mindegyik osztozik, hogy adott lépésekből meghatározott folyamatokat hajt végre.
 
 Összefoglalva, egy ilyen tökéletesített rendszer ugyanazt tudja, mint egy felhasználó, viszont sokkal gyorsabban és konzisztensebben, anélkül, hogy fel kellene állnia nyújtózni vagy elmenni egy kávészünetre.
 
@@ -266,19 +271,17 @@ Gyakorlatilag csupán az adott folyamattól függ, hogy lebontható-e olyan triv
 
 Alább található néhány mai rendszer, melyeket a technológia úttörőjének lehet nevezni:
 \begin{itemize}
-	\item UIPath
-	\item Microsoft Power Automate
-	\item Blue Prism
-	\item Automaton Anywhere
-	\item Kofax
+	\item UIPath,
+	\item Microsoft Power Automate,
+	\item Blue Prism,
+	\item Automaton Anywhere,
+	\item Kofax.
 \end{itemize}
 
 \Section{Delphi}
 
 A dolgozathoz készült szoftver Delphi nyelven íródott, így fontos legalább nagyvona\hyp{}lakban ismerni a nyelvet, hogy megértsük a választás okát.
-A Delphi egy általános célú, erősen típusos, objektum orientált programozási nyelv és szoftvertermék, ami az Object Pascal programozási nyelv Delphi dialektusát használ\hyp{}ja, integrált fejlesztői környezetet biztosít, újabban a gyors alkalmazásfejlesztés (RAD, Rapid Application Development) szoftverfejlesztési elv szerint. A Delphi fordítói natív kódot generálnak a célrendszertől függően, legyen az Microsoft Windows, macOS, iOS, Android vagy Linux (x64).
-
-\textit{\cite{delphi:001}}
+A Delphi egy általános célú, erősen típusos, objektum orientált programozási nyelv és szoftvertermék, ami az Object Pascal programozási nyelv Delphi dialektusát használ\hyp{}ja, integrált fejlesztői környezetet biztosít, újabban a gyors alkalmazásfejlesztés (RAD, Rapid Application Development) szoftverfejlesztési elv szerint. A Delphi fordítói natív kódot generálnak a célrendszertől függően, legyen az Microsoft Windows, macOS, iOS, Android vagy Linux (x64).\textit{\cite{delphi:001}}
 
 \subsection{Múltja röviden}
 Az ,,anyanyelve" a Delphinek a Pascal, ami pedig a modellje nagy részét az Algolnak köszönheti -- az első magasszintű progamozási nyelvnek ami olvasható, struktúrált és szisztematikusan meghatározott szintaxissal rendelkezik. A hatvanas években számos utódját fejlesztették az Algolnak, ezek közül a legsikeresebb a Pascal volt.
@@ -287,9 +290,7 @@ Az ,,anyanyelve" a Delphinek a Pascal, ami pedig a modellje nagy részét az Alg
 
 2006-ban a Borland átadta a fejlesztőeszközöket a CodeGear nevű leányvállalatá\hyp{}nak, majd ezt a leányvállalatot 2008-ban eladta az Embarcadero Technologies-nek. Ez az új cég megtartotta a régi fejlesztői divíziót és számos új verziót dobott piacra. 2015-ben az Idera Software nevű cég pedig felvásárolta az Embarcadero-t és mind a mai napig ugyanúgy Embaracadero márka alatt működteti a fejlesztői eszközök divízióját.
 
-Az évek alatt rendkívül sok modernizáción ment át a Delphi. OLE (Object Linking and Embedding) automatizáció és változó adattípus támogatásától kezdve, DLL debu\hyp{}goláson és XML támogatáson keresztül egészen a multi-platform alkalmazásokig és az in-line változó deklarálásig.
-
-\textit{\cite{delphi:002}}
+Az évek alatt rendkívül sok modernizáción ment át a Delphi. OLE (Object Linking and Embedding) automatizáció és változó adattípus támogatásától kezdve, DLL debu\hyp{}goláson és XML támogatáson keresztül egészen a multi-platform alkalmazásokig és az in-line változó deklarálásig.\textit{\cite{delphi:002}}
 
 \subsection{Napjainkban}
 

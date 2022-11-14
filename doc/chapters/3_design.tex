@@ -2,14 +2,14 @@
 
 A dolgozat által vizsgált témahoz egy komplex multifunkciós szoftver került megterve\hyp{}zésre, mely a dolgozati téma elemzési részében kifejezetten nagy szerepet tölt be. Összetettsége révén rengeteg időt és odafigyelést igényelt már maga a tervezési fázis is. Számos ábra és tervezet került megalkotásra, melynek a túlnyomó része rendkívül jelentősnek bizonyult az implementáció során.
 
-\Section{Dizájn}
+\Section{A szofter felépítése}
 
-A legmagasabb szinten az alábbi ábra nyújtja a legtisztább áttekintését a különböző funkcióknak és a szoftver sokszínűségének.
+A legmagasabb szinten a 3.1. ábra nyújtja a legtisztább áttekintését a különböző funkcióknak és a szoftver sokszínűségének.
 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=\textwidth,keepaspectratio=true]{images/img_plan_1}
-\caption{\textbf{High-level áttekintő ábra}}
+\caption{\textbf{Szerkezeti áttekintő ábra}}
 \label{fig:plan}
 \end{center}
 \end{figure}
@@ -19,7 +19,7 @@ A legmagasabb szinten az alábbi ábra nyújtja a legtisztább áttekintését a
 	\item \textbf{Felhasználói felülethez kapcsolódó szálak}: Fontos - a felhasználó számára nem látható - szálak, amelyek feldata bizonyos billentyűkombinációk figyelése anélkül, hogy a program reszponzivitását kártékonyan befolyásolnák.
 	\item \textbf{Láncolt lista kezelő}: Az egyes folyamatok láncolt listaként vannak kezelve a szoftverbe, ez az alrendszer felel a megfelelő értelmezésükért. 
 	\item \textbf{Folyamat rögzítő}: Figyeli és rögzíti a perifériák általi beviteli értékeket.
-	\item \textbf{Folymat generáló}: Előre meghatározott forgatóvkönyvek alapján úgy generál folyamatokat mintha azt egy felhasználó végezte volna el.
+	\item \textbf{Folyamat generáló}: Előre meghatározott forgatóvkönyvek alapján úgy generál folyamatokat mintha azt egy felhasználó végezte volna el.
 	\item \textbf{Folyamat lejátszó}: A folyamatokat játsza vissza, egy felhasználót szimulál.
 	\item \textbf{Folyamat időzítő}: A Windowsba integrált rendszert felhasználva ütemez / időzít folyamatokat.
 	\item \textbf{Adatbányász}: Az Alpha-algoritmust implementálva folyamatelemzést hajt végre több folyamaton.
@@ -92,7 +92,7 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 	
 	Maguk a folyamatok szolgálnak bemenetként, részeredményekként eseménynapló és lenyomati mátrix jön létre, kimentként pedig egy olyan Petri-háló kerül generálásra mely leírja a folyamat modelljét.
 
-	Vegyük az alábbi táblázatot.
+	Vegyük a 3.1. táblázatot.
 	\newpage
 
 	\begin{table}[h!]
@@ -138,7 +138,7 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 		\item Az "\textbf{Eltelt idő}" oszlop alapján (az előző esemény óta eltelt időt mutatja) pedig létrejön egy relatív-időbélyeg az "\textbf{ID}" oszlop segítségével, hiszen az utóbbi alap\hyp{}ján határozható meg az események szekvenciája.
 	\end{enumerate}
 	
-	Ezeknek megfelelően az alábbi eseménynaplót kapjuk:
+	Ezeknek megfelelően a 3.2. táblázatban látható eseménynaplót kapjuk.
 	\newpage
 
 	\begin{table}[h]
@@ -177,13 +177,13 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 	
 	Miután megvan az eseménynapló, a következő két lépésben meghatározzuk a beme\hyp{}neti- és kimeneti események halmazait:
 	\begin{enumerate}
-		\item $E_I=<T_0>$
-		\item $E_O=<T_3>$		
+		\item $E_I=<T_0>$,
+		\item $E_O=<T_3>$.
 	\end{enumerate}
 
 	Ezután a következő lépéshez az eseménynaplóban szereplő események kapcsolatait közvetlen-sorrend, okozat, párhuzam és választás relációkra alakítja az algoritmus.
 
-	Ezzel jön létre az alábbi lenyomati mátrix:
+	Ezzel jön létre a 3.3. táblázatban látható lenyomati mátrix.
 	
 	\begin{table}[h]
 	\begin{center}
@@ -209,7 +209,7 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 
 	Ezen a mátrixon kerül ábrázolásra az összes esemény közötti kapcsolat. Több szem\hyp{}pontból is hasznos ez a mátrix, többek között a struktúrája is megfelelő ahhoz, hogy program szinten meghatározzuk a következő lépésben a lehetséges halmazpárokat, vala\hyp{}mint emberi szemmel is kifejezetten könnyen értelmezhető.
 
-	Ezt a mátrixot felhasználva az alábbi halmazpárok lehetségesek a jelenlegi példában:
+	Ezt a mátrixot felhasználva a 3.4. táblázatban látható halmazpárok lehetségesek a jelenlegi példában:
 	\newpage
 
 	\begin{table}[h]
@@ -244,7 +244,7 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 	\end{center}
 	\end{table}	
 
-	Következő lépésként ezekből a halmazpárokból kell eltávolítani a nem-maximálisak\hyp{}at, azaz azokat amik részhalmazai egy másiknak. Ezt program szinten egy többszörös ciklus segítségével könnyedén el lehet végezni, jelen példában pedig az alábbi négy halmazpár maradt:
+	Következő lépésként ezekből a halmazpárokból kell eltávolítani a nem-maximálisak\hyp{}at, azaz azokat amik részhalmazai egy másiknak. Ezt program szinten egy többszörös ciklus segítségével könnyedén el lehet végezni, jelen példában pedig az 3.5. táblázatban található, négy halmazpár maradt:
 	
 	\begin{table}[h]
 	\begin{center}
@@ -302,7 +302,7 @@ Először is pontosan meg kell határozni, hogy milyen lépésekből áll az alg
 
 \Section{Implementáció}
 
-A program gyakorlati megvalósítása egy-két apróságtól eltekintve megegyezik a terve\hyp{}zettel. Az alapvető stuktúrát megtartotta, az egymáshoz tartozó funkciók, változók és kódrészletek külön egységekbe (továbbiakban: unitok) lettek szervezve, így csoportosít\hyp{}va az egyes szoftverfunkciókat.
+A program gyakorlati megvalósítása egy-két apróságtól eltekintve megegyezik a terve\hyp{}zettel. Fejlesztés közben felmerültek ötletek, melyek javítottak az eredeti terven, de az alapvető stuktúra megmaradt, az egymáshoz tartozó funkciók, változók és kódrészletek pedig külön egységekbe (továbbiakban: unitok) lettek szervezve, így csoportosítva az egyes szoftverfunkciókat.
 
 Ezek a unitok többféle kapcsolatban állhatnak egymással, az egymásra való hivatko\hyp{}zásuknak függvényében. Ezeket a kapcsolatokat a 3.3 ábra demonstrálja.
 
